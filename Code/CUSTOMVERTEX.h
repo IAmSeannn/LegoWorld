@@ -3,6 +3,7 @@
 // A structure for our custom vertex type
 struct CUSTOMVERTEX
 {
-	float x, y, z;      // X, Y, Z position of the vertex.
+	D3DXVECTOR3 position;	// Position
+	D3DXVECTOR3 normal;		// Vertex normal
 	DWORD colour;       // The vertex color
 };

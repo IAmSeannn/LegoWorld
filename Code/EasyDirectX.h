@@ -12,7 +12,7 @@
 #include <memory>
 
 // The structure of a vertex in our vertex buffer...
-#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
+#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_NORMAL)
 
 class EasyDirectX
 {
@@ -46,7 +46,7 @@ private:
 	void SetupViewMatrices();
 	HRESULT SetupD3D(HWND hWnd);
 	HRESULT SetupGeometry();
-
-	
+	void SetupMaterial(float r, float g, float b);
+	void SetupDirectionalLight();
 };
 
