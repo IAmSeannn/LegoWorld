@@ -1,158 +1,79 @@
-#include "EasyDirectX.h"
-EasyDirectX::EasyDirectX()
+//-----------------------------------------------------------------------------
+// Demonstration of Directional Lighting in Direct3D
+
+#define D3D_DEBUG_INFO
+
+//-----------------------------------------------------------------------------
+// Include these files
+#include <Windows.h>	// Windows library (for window functions, menus, dialog boxes, etc)
+#include <d3dx9.h>		// Direct 3D library (for all Direct 3D funtions).
+
+//-----------------------------------------------------------------------------
+// Global variables
+
+LPDIRECT3D9             g_pD3D           = NULL; // Used to create the D3DDevice
+LPDIRECT3DDEVICE9       g_pd3dDevice     = NULL; // The rendering device
+LPDIRECT3DVERTEXBUFFER9 g_pCubeVB        = NULL; // Buffer to hold vertices for the cube
+LPDIRECT3DVERTEXBUFFER9 g_pFloorVB		 = NULL; // Buffer to hold vertices for the floor
+
+// A structure for our custom vertex type
+struct CUSTOMVERTEX
 {
-	camPosX = 0.0f;
-	camPosY = 0.0f;
-	camPosZ = -35.0f;
+    D3DXVECTOR3 position;	// Position
+	D3DXVECTOR3 normal;		// Vertex normal
+};
 
-	camLookX = 0.0f;
-	camLookY = 0.0f;
-	camLookZ = 0.0f;
-}
-EasyDirectX::~EasyDirectX()
+// The structure of a vertex in our vertex buffer...
+#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_NORMAL)
+
+//-----------------------------------------------------------------------------
+// Initialise Direct 3D.
+// Requires a handle to the window in which the graphics will be drawn.
+HRESULT SetupD3D(HWND hWnd)
 {
-}
+    // Create the D3D object.
+    if (NULL == (g_pD3D = Direct3DCreate9(D3D_SDK_VERSION)))
+        return E_FAIL;
 
-std::shared_ptr<EasyDirectX> EasyDirectX::Current(new EasyDirectX());
+    // Set up the structure used to create the D3DDevice
+    D3DPRESENT_PARAMETERS d3dpp;
+    ZeroMemory(&d3dpp, sizeof(d3dpp));
+    d3dpp.Windowed = TRUE;
+    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
+    d3dpp.EnableAutoDepthStencil = TRUE;
+    d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
 
-//messaging function
-LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	switch (msg)
-	{
-	case WM_DESTROY:
-	{
-		EasyDirectX::Current->CleanUp();
-		PostQuitMessage(0);
-		return 0;
-	}
+    // Create the D3DDevice
+    if (FAILED(g_pD3D -> CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd,
+                                      D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+                                      &d3dpp, &g_pd3dDevice)))
+    {
+        return E_FAIL;
+    }
+    
+	// Enable the Z buffer, since we're dealing with 3D geometry.
+	g_pd3dDevice -> SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
 
-	// Respond to a keyboard event.
-	case WM_CHAR:
-		switch (wParam)
-		{
-		case 'w':					//move forward
-			EasyDirectX::Current->camPosZ += 0.2f;
-			return 0;
-			break;
-		case 's':					//move backward
-			EasyDirectX::Current->camPosZ -= 0.2f;
-			return 0;
-			break;
-		case 'a':					//straft left
-			EasyDirectX::Current->camPosX -= 0.2f;
-			return 0;
-			break;
-		case 'd':					//straft right
-			EasyDirectX::Current->camPosX += 0.2f;
-			return 0;
-			break;
-		case 'q':					//turn left
-			EasyDirectX::Current->camLookX -= 0.2f;
-			return 0;
-			break;
-		case 'e':					//turn right
-			EasyDirectX::Current->camLookX += 0.2f;
-			return 0;
-			break;
-		case 'r':					//move up
-			EasyDirectX::Current->camPosY += 0.2f;
-			return 0;
-			break;
-		case 'f':					//move down
-			EasyDirectX::Current->camPosY -= 0.2f;
-			return 0;
-			break;
-		}
-		break;
-
-	}
-
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+    return S_OK;
 }
 
-
-//-------------------------------------------------------
-//Class Functions
-void EasyDirectX::RegisterWindow()
+//-----------------------------------------------------------------------------
+// Release (delete) all the resources used by this program.
+// Only release things if they are valid (i.e. have a valid pointer).
+// If not, the program will crash at this point.
+void CleanUp()
 {
-	wc = { sizeof(WNDCLASSEX), CS_CLASSDC, MsgProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, "LegoWorld", NULL };
-	RegisterClassEx(&wc);
+    if (g_pCubeVB != NULL)		g_pCubeVB -> Release();
+	if (g_pFloorVB != NULL)		g_pFloorVB -> Release();
+    if (g_pd3dDevice != NULL)	g_pd3dDevice -> Release();
+    if (g_pD3D != NULL)			g_pD3D -> Release();
 }
 
-void EasyDirectX::CreateApplicationWindow()
-{
-	hWnd = { CreateWindow("LegoWorld", "LegoWorld - A Place For Lego", WS_OVERLAPPEDWINDOW, 100, 100, 700, 700, GetDesktopWindow(), NULL, wc.hInstance, NULL) };
-}
-
-void EasyDirectX::InitializeDirect3D()
-{
-	// Initialize Direct3D
-	if (SUCCEEDED(SetupD3D(hWnd)))
-	{
-		// Create the scene geometry
-		if (SUCCEEDED(SetupGeometry()))
-		{
-			// Show the window
-			ShowWindow(hWnd, SW_SHOWDEFAULT);
-			UpdateWindow(hWnd);
-
-			// Enter the message loop
-			MSG msg;
-			ZeroMemory(&msg, sizeof(msg));
-			while (msg.message != WM_QUIT)
-			{
-				if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
-				{
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
-				}
-				else
-					Render();
-			}
-		}
-
-		CleanUp();
-	}
-
-	UnregisterClass("LegoWorld", wc.hInstance);
-}
-
-HRESULT EasyDirectX::SetupD3D(HWND hWnd)
-{
-	// Initialise Direct 3D.
-	// Requires a handle to the window in which the graphics will be drawn.
-
-	// Create the D3D object, return failure if this can't be done.
-	if (NULL == (pD3D = Direct3DCreate9(D3D_SDK_VERSION))) return E_FAIL;
-
-	// Set up the structure used to create the D3DDevice
-	D3DPRESENT_PARAMETERS d3dpp;
-	ZeroMemory(&d3dpp, sizeof(d3dpp));
-	d3dpp.Windowed = TRUE;
-	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
-	d3dpp.EnableAutoDepthStencil = TRUE;
-	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
-
-	// Create the D3DDevice
-	if (FAILED(pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd,
-		D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-		&d3dpp, &pd3dDevice)))
-	{
-		return E_FAIL;
-	}
-
-	// Turn on the Z buffer
-	pd3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
-
-	// Turn off the lighting, as we're using our own vertex colours.
-	pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-
-	return S_OK;
-}
-
-HRESULT EasyDirectX::SetupGeometry()
+//-----------------------------------------------------------------------------
+// Set up the scene geometry.
+// Define a cube, with associated vertex normals.
+HRESULT SetupGeometry()
 {
 	//ADD ALL BLOCKS TO BLOCKSVECTOR
 
@@ -203,58 +124,174 @@ HRESULT EasyDirectX::SetupGeometry()
 
 	return S_OK;
 }
-
-void EasyDirectX::Render()
+// Set up a vertex data.
+void SetupVertexWithNormalGeometry( CUSTOMVERTEX* pV, int index, 
+								    float px, float py, float pz, 
+								    float nx, float ny, float nz)
 {
-	// Clear the backbuffer to a black color
-	pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 150), 1.0f, 0);
-
-	// Begin the scene
-	if (SUCCEEDED(pd3dDevice->BeginScene()))
-	{
-		// Define the viewpoint.
-		SetupViewMatrices();
-
-		// Render the contents of the vertex buffer.
-		pd3dDevice->SetStreamSource(0, pVertexBuffer, 0, sizeof(CUSTOMVERTEX));
-		pd3dDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
-		// using a D3DPT_TRIANGLELIST primitive - work out nunber of triangles by access block vector
-		pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, (Blocks.size() * (LegoBlock::VertNum / 3)));
-
-																// End the scene.
-		pd3dDevice->EndScene();
-	}
-
-	// Present the backbuffer to the display.
-	pd3dDevice->Present(NULL, NULL, NULL, NULL);
+	pV[index].position.x = px;	// Vertex co-ordinate.
+	pV[index].position.y = py;
+	pV[index].position.z = pz;
+	pV[index].normal.x = nx;	// Vertex normal.
+	pV[index].normal.y = ny;
+	pV[index].normal.z = nz;
 }
 
-void EasyDirectX::CleanUp()
-{
-	// Release (delete) all the resources used by this program.
-	// Only release things if they are valid (i.e. have a valid pointer).
-	// If not, the program will crash at this point.
-
-	if (pVertexBuffer != NULL)	pVertexBuffer->Release();
-	if (pd3dDevice != NULL)		pd3dDevice->Release();
-	if (pD3D != NULL)			pD3D->Release();
-}
-
-void EasyDirectX::SetupViewMatrices()
+//-----------------------------------------------------------------------------
+// Set up the view - the view and projection matrices.
+void SetupViewMatrices()
 {
 	// Set up the view matrix.
 	// This defines which way the 'camera' will look at, and which way is up.
-	D3DXVECTOR3 vCamera(camPosX, camPosY, camPosZ);
-	D3DXVECTOR3 vLookat(camLookX, camLookY, camLookZ);
-	D3DXVECTOR3 vUpVector(0.0f, 1.0f, 0.0f);
-	D3DXMATRIX matView;
-	D3DXMatrixLookAtLH(&matView, &vCamera, &vLookat, &vUpVector);
-	pd3dDevice->SetTransform(D3DTS_VIEW, &matView);
+    D3DXVECTOR3 vCamera(50.0f, 50.0f, -40.0f);
+    D3DXVECTOR3 vLookat(10.0f, 10.0f, 0.0f);
+    D3DXVECTOR3 vUpVector(0.0f, 1.0f, 0.0f);
+    D3DXMATRIX matView;
+    D3DXMatrixLookAtLH( &matView, &vCamera, &vLookat, &vUpVector);
+    g_pd3dDevice -> SetTransform(D3DTS_VIEW, &matView);
 
 	// Set up the projection matrix.
 	// This transforms 2D geometry into a 3D space.
-	D3DXMATRIX matProj;
-	D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI / 4, 1.0f, 1.0f, 100.0f);
-	pd3dDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+    D3DXMATRIX matProj;
+    D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI/4, 1.0f, 1.0f, 200.0f);
+    g_pd3dDevice -> SetTransform(D3DTS_PROJECTION, &matProj);
 }
 
+//---------------------------------------------------------------------------------
+
+void SetupMaterial(float r, float g, float b)
+{
+    // Define a material.
+	// Reflects only diffuse colour.
+	D3DMATERIAL9 Mtl;
+    ZeroMemory(&Mtl, sizeof(D3DMATERIAL9));
+    Mtl.Diffuse.r = r;
+	Mtl.Diffuse.g = g;
+    Mtl.Diffuse.b = b;
+    Mtl.Diffuse.a = 1.0f;
+    g_pd3dDevice -> SetMaterial(&Mtl);
+}
+
+//---------------------------------------------------------------------------------
+void SetupDirectionalLight()
+{
+	// Define a directional light.
+	// Possesses only a diffuse colour.
+    D3DLIGHT9 SampleLight;
+    ZeroMemory(&SampleLight, sizeof(D3DLIGHT9));
+    SampleLight.Type = D3DLIGHT_DIRECTIONAL;
+
+	SampleLight.Diffuse.r = 1.0f;
+	SampleLight.Diffuse.g = 1.0f;
+	SampleLight.Diffuse.b = 1.0f;
+
+	SampleLight.Direction = D3DXVECTOR3(-1, -1, 0); // Light points along -ve X axis.
+
+	// Select and enable the light.
+    g_pd3dDevice -> SetLight(0, &SampleLight);
+    g_pd3dDevice -> LightEnable(0, TRUE);
+}
+
+//-----------------------------------------------------------------------------
+// Render the scene.
+void Render()
+{
+    // Clear the backbuffer to a blue colour, also clear the Z buffer at the same time.
+    g_pd3dDevice -> Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(50, 50, 150), 1.0f, 0);
+
+    // Begin the scene
+    if (SUCCEEDED(g_pd3dDevice -> BeginScene()))
+    {
+		g_pd3dDevice -> SetFVF(D3DFVF_CUSTOMVERTEX);
+		D3DXMATRIX TranslateMat;
+
+		// Render the floor
+		SetupMaterial(1.0f, 1.0f, 1.0f);
+		D3DXMatrixTranslation(&TranslateMat, -50, 0, -20);
+		g_pd3dDevice -> SetTransform(D3DTS_WORLD, &TranslateMat);
+        g_pd3dDevice -> SetStreamSource(0, g_pFloorVB, 0, sizeof(CUSTOMVERTEX));
+        g_pd3dDevice -> DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+
+    	// Render the cube.
+		SetupMaterial(0.0f, 0.8f, 0.8f);
+		D3DXMatrixTranslation(&TranslateMat, 0, 0, 0);
+		g_pd3dDevice -> SetTransform(D3DTS_WORLD, &TranslateMat);
+        g_pd3dDevice -> SetStreamSource(0, g_pCubeVB, 0, sizeof(CUSTOMVERTEX));
+        g_pd3dDevice -> DrawPrimitive(D3DPT_TRIANGLELIST, 0, 12);
+
+        // End the scene.
+        g_pd3dDevice -> EndScene();
+    }
+
+    // Present the backbuffer to the display.
+    g_pd3dDevice -> Present(NULL, NULL, NULL, NULL);
+}
+
+//-----------------------------------------------------------------------------
+// The window's message handling function.
+LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (msg)
+    {
+        case WM_DESTROY:
+		{
+            PostQuitMessage(0);
+            return 0;
+		}
+    }
+
+    return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+//-----------------------------------------------------------------------------
+// WinMain() - The application's entry point.
+// This sort of procedure is mostly standard, and could be used in most
+// DirectX applications.
+int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
+{
+    // Register the window class
+    WNDCLASSEX wc = {sizeof(WNDCLASSEX), CS_CLASSDC, MsgProc, 0L, 0L,
+                     GetModuleHandle(NULL), NULL, NULL, NULL, NULL,
+                     "Basic D3D Example", NULL};
+    RegisterClassEx(&wc);
+
+    // Create the application's window
+    HWND hWnd = CreateWindow( "Basic D3D Example", "Directional Lighting Example",
+                              WS_OVERLAPPEDWINDOW, 100, 100, 600, 600,
+                              GetDesktopWindow(), NULL, wc.hInstance, NULL);
+
+    // Initialize Direct3D
+    if (SUCCEEDED(SetupD3D(hWnd)))
+    {
+        // Create the scene geometry
+        if (SUCCEEDED(SetupGeometry()))
+        {
+            // Show the window
+            ShowWindow(hWnd, SW_SHOWDEFAULT);
+
+			// Set up the light.
+			SetupDirectionalLight();
+	
+			// Define the viewpoint.
+			SetupViewMatrices();
+
+            // Enter the message loop
+            MSG msg;
+            ZeroMemory(&msg, sizeof(msg));
+            while (msg.message != WM_QUIT)
+            {
+                if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+                {
+                    TranslateMessage(&msg);
+                    DispatchMessage(&msg);
+                }
+                else
+                    Render();
+            }
+        }
+		CleanUp();
+    }
+
+    UnregisterClass("Basic D3D Example", wc.hInstance);
+    return 0;
+}

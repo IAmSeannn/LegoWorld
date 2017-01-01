@@ -1,4 +1,3 @@
-﻿  EasyDirectX.cpp
-Blank.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+﻿  Blank.cpp
   Blank.vcxproj -> C:\Users\iamse\Documents\GitHub\LegoWorld\Code\.\Debug\Blank.exe
   Blank.vcxproj -> .\Debug/Blank.pdb (Full PDB)
