@@ -6,13 +6,10 @@
 // Include these files
 #include <Windows.h>	// Windows library (for window functions, menus, dialog boxes, etc)
 #include <d3dx9.h>		// Direct 3D library (for all Direct 3D funtions).
-
-// A structure for our custom vertex type
-struct CUSTOMVERTEX
-{
-	float x, y, z;      // X, Y, Z position of the vertex.
-	DWORD colour;       // The vertex color
-};
+#include <vector>
+#include "LegoBlock.h"
+#include "CUSTOMVERTEX.h"
+#include <memory>
 
 // The structure of a vertex in our vertex buffer...
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_DIFFUSE)
@@ -27,7 +24,12 @@ public:
 	void RegisterWindow();
 	void CreateApplicationWindow();
 	void InitializeDirect3D();
+	void CleanUp();
 
+	//camera vars
+	float camPosX, camPosY, camPosZ, camLookX, camLookY, camLookZ;
+
+	static std::shared_ptr<EasyDirectX> Current;
 
 private:
 	//vars from WINMAIN
@@ -37,10 +39,14 @@ private:
 	LPDIRECT3DDEVICE9 pd3dDevice;
 	LPDIRECT3DVERTEXBUFFER9 pVertexBuffer;
 
+	std::vector<LegoBlock> Blocks;
+
 	void Render();
-	void CleanUp();
+	
 	void SetupViewMatrices();
 	HRESULT SetupD3D(HWND hWnd);
 	HRESULT SetupGeometry();
+
+	
 };
 

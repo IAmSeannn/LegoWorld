@@ -16,9 +16,8 @@
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 {
-	EasyDirectX edx;
-	edx.RegisterWindow();
-	edx.CreateApplicationWindow();
-	edx.InitializeDirect3D();
+	EasyDirectX::Current->RegisterWindow();
+	EasyDirectX::Current->CreateApplicationWindow();
+	EasyDirectX::Current->InitializeDirect3D();
 	return 0;
 }

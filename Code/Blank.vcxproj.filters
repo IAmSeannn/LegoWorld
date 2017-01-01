@@ -21,9 +21,18 @@
     <ClCompile Include="EasyDirectX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LegoBlock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EasyDirectX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LegoBlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CUSTOMVERTEX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

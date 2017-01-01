@@ -1,10 +1,19 @@
 #include "EasyDirectX.h"
 EasyDirectX::EasyDirectX()
 {
+	camPosX = 0.0f;
+	camPosY = 0.0f;
+	camPosZ = -35.0f;
+
+	camLookX = 0.0f;
+	camLookY = 0.0f;
+	camLookZ = 0.0f;
 }
 EasyDirectX::~EasyDirectX()
 {
 }
+
+std::shared_ptr<EasyDirectX> EasyDirectX::Current(new EasyDirectX());
 
 //messaging function
 LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -13,11 +22,50 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_DESTROY:
 	{
-		// The user has clicked on the 'close' button on the window's title bar.
-		// Send a 'WM_QUIT' message to the application to close it down.
+		EasyDirectX::Current->CleanUp();
 		PostQuitMessage(0);
 		return 0;
 	}
+
+	// Respond to a keyboard event.
+	case WM_CHAR:
+		switch (wParam)
+		{
+		case 'w':					//move forward
+			EasyDirectX::Current->camPosZ += 0.2f;
+			return 0;
+			break;
+		case 's':					//move backward
+			EasyDirectX::Current->camPosZ -= 0.2f;
+			return 0;
+			break;
+		case 'a':					//straft left
+			EasyDirectX::Current->camPosX -= 0.2f;
+			return 0;
+			break;
+		case 'd':					//straft right
+			EasyDirectX::Current->camPosX += 0.2f;
+			return 0;
+			break;
+		case 'q':					//turn left
+			EasyDirectX::Current->camLookX -= 0.2f;
+			return 0;
+			break;
+		case 'e':					//turn right
+			EasyDirectX::Current->camLookX += 0.2f;
+			return 0;
+			break;
+		case 'r':					//move up
+			EasyDirectX::Current->camPosY += 0.2f;
+			return 0;
+			break;
+		case 'f':					//move down
+			EasyDirectX::Current->camPosY -= 0.2f;
+			return 0;
+			break;
+		}
+		break;
+
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
@@ -106,8 +154,20 @@ HRESULT EasyDirectX::SetupD3D(HWND hWnd)
 
 HRESULT EasyDirectX::SetupGeometry()
 {
+	//ADD ALL BLOCKS TO BLOCKSVECTOR
+
+	LegoBlock a(0, 0, 0);
+	LegoBlock b(3, 3, 3);
+	LegoBlock c(0, 3, 0);
+
+	Blocks.push_back(a);
+	Blocks.push_back(b);
+	Blocks.push_back(c);
+
+	//THEN ADD ALL CONTENTS OF BLOCKS TO pVertices
+
 	// Calculate the number of vertices required, and the size of the buffer to hold them.
-	int Vertices = 2 * 3;	// Six vertices for the rectangle.
+	int Vertices = LegoBlock::VertNum * Blocks.size();
 	int BufferSize = Vertices * sizeof(CUSTOMVERTEX);
 
 	// Now get Direct3D to create the vertex buffer.
@@ -131,40 +191,14 @@ HRESULT EasyDirectX::SetupGeometry()
 
 	// Fill the vertex buffers with data...
 
-	// Triangle 1.
-	pVertices[0].x = 0;
-	pVertices[0].y = 0;
-	pVertices[0].z = 0;
-	pVertices[0].colour = 0x00ff0000; // (red)
-
-	pVertices[1].x = 0;
-	pVertices[1].y = 10;
-	pVertices[1].z = 0;
-	pVertices[1].colour = 0x00ff0000; // (yellow)
-
-	pVertices[2].x = 10;
-	pVertices[2].y = 0;
-	pVertices[2].z = 0;
-	pVertices[2].colour = 0x00ff0000; // (green)
-
-									  // Triangle 2.
-	pVertices[3].x = 10;
-	pVertices[3].y = 0;
-	pVertices[3].z = 0;
-	pVertices[3].colour = 0x00ff0000; // (red)
-
-	pVertices[4].x = 0;
-	pVertices[4].y = 10;
-	pVertices[4].z = 0;
-	pVertices[4].colour = 0x00ffff00; // (yellow)
-
-	pVertices[5].x = 10;
-	pVertices[5].y = 10;
-	pVertices[5].z = 0;
-	pVertices[5].colour = 0x0000ff00; // (green)
+	std::shared_ptr<int> counter(new int(0));
+	for (LegoBlock b : Blocks)
+	{
+		b.AddVertices(pVertices, counter);
+	}
 
 
-									  // Unlock the vertex buffer...
+	// Unlock the vertex buffer...
 	pVertexBuffer->Unlock();
 
 	return S_OK;
@@ -184,7 +218,8 @@ void EasyDirectX::Render()
 		// Render the contents of the vertex buffer.
 		pd3dDevice->SetStreamSource(0, pVertexBuffer, 0, sizeof(CUSTOMVERTEX));
 		pd3dDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
-		pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);  // using a D3DPT_TRIANGLELIST primitive
+		// using a D3DPT_TRIANGLELIST primitive - work out nunber of triangles by access block vector
+		pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, (Blocks.size() * (LegoBlock::VertNum / 3)));
 
 																// End the scene.
 		pd3dDevice->EndScene();
@@ -209,8 +244,8 @@ void EasyDirectX::SetupViewMatrices()
 {
 	// Set up the view matrix.
 	// This defines which way the 'camera' will look at, and which way is up.
-	D3DXVECTOR3 vCamera(0.0f, 0.0f, -35.0f);
-	D3DXVECTOR3 vLookat(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 vCamera(camPosX, camPosY, camPosZ);
+	D3DXVECTOR3 vLookat(camLookX, camLookY, camLookZ);
 	D3DXVECTOR3 vUpVector(0.0f, 1.0f, 0.0f);
 	D3DXMATRIX matView;
 	D3DXMatrixLookAtLH(&matView, &vCamera, &vLookat, &vUpVector);

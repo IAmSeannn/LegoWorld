@@ -138,9 +138,12 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
     </ClCompile>
     <ClCompile Include="EasyDirectX.cpp" />
+    <ClCompile Include="LegoBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EasyDirectX.h" />
+    <ClInclude Include="LegoBlock.h" />
+    <ClInclude Include="CUSTOMVERTEX.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
