@@ -138,6 +138,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
     </ClCompile>
     <ClCompile Include="LegoBlock.cpp" />
+    <ClCompile Include="MoveableBlock.cpp" />
     <ClCompile Include="PatternCreator.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
@@ -145,6 +146,7 @@
     <ClInclude Include="ColourData.h" />
     <ClInclude Include="LegoBlock.h" />
     <ClInclude Include="CUSTOMVERTEX.h" />
+    <ClInclude Include="MoveableBlock.h" />
     <ClInclude Include="PatternCreator.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>

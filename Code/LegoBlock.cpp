@@ -8,24 +8,24 @@ void LegoBlock::AddVertices(CUSTOMVERTEX * verts)
 {
 	pVertices = verts;
 	counter = 0;
-	//maths are for a 2x2 lego block
+	//maths are for a 1x1 lego block
 	//front face
-	AddFaceVertical(x, y, z, x + 2, y + 1, z);
+	AddFaceVertical(x, y, z, x + 1, y + 1, z);
 
 	//right face
-	AddFaceVertical(x + 2, y, z, x + 2, y + 1, z + 2);
+	AddFaceVertical(x + 1, y, z, x + 1, y + 1, z + 1);
 
 	//top face
-	AddFaceHorizontal(x, y + 1, z, x + 2, y + 1, z + 2);
+	AddFaceHorizontal(x, y + 1, z, x + 1, y + 1, z + 1);
 
 	//left face
-	AddFaceVertical(x, y, z + 2, x, y + 1, z);
+	AddFaceVertical(x, y, z + 1, x, y + 1, z);
 
 	//back face
-	AddFaceVertical(x + 2, y, z + 2, x, y + 1, z + 2);
+	AddFaceVertical(x + 1, y, z + 1, x, y + 1, z + 1);
 
 	//bottom face
-	AddFaceHorizontal(x, y, z + 2, x + 2, y, z);
+	AddFaceHorizontal(x, y, z + 1, x + 1, y, z);
 
 	//start again and add normals
 	counter = 0;

@@ -13,6 +13,7 @@
 #include "CUSTOMVERTEX.h"
 #include "Utils.h"
 #include "PatternCreator.h"
+#include "MoveableBlock.h"
 
 //-----------------------------------------------------------------------------
 // Global variables
@@ -81,7 +82,6 @@ void CleanUp()
 HRESULT SetupGeometry()
 {
 	//create the world
-
 	//outer grass
 	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, Utils::Green);
 	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, Utils::Green);
@@ -98,8 +98,9 @@ HRESULT SetupGeometry()
 	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, Utils::Green);
 	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, Utils::Red);
 
-
-
+	//create moving block
+	MoveableBlock b(6, 1, 6, Utils::Red);
+	g_Blocks.push_back(b);
 
 
 

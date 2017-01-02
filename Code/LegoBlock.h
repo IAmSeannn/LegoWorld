@@ -15,7 +15,7 @@ public:
 	static const int VertNum = 36;
 	ColourData Colour;
 
-private:
+protected:
 	float x, y, z;
 	void AddFaceHorizontal(float, float, float, float, float, float);
 	void AddFaceVertical(float, float, float, float, float, float);
