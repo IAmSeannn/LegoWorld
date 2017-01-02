@@ -11,15 +11,17 @@
 #include <vector>
 #include <memory>
 #include "CUSTOMVERTEX.h"
+#include "Utils.h"
+#include "PatternCreator.h"
 
 //-----------------------------------------------------------------------------
 // Global variables
 
 LPDIRECT3D9             g_pD3D = NULL; // Used to create the D3DDevice
 LPDIRECT3DDEVICE9       g_pd3dDevice = NULL; // The rendering device
-std::vector<LegoBlock> g_Blocks;
-D3DXVECTOR3 g_vCamera(50.0f, 50.0f, -40.0f);
-D3DXVECTOR3 g_vLookat(10.0f, 10.0f, 0.0f);
+std::vector<LegoBlock>  g_Blocks;
+D3DXVECTOR3 g_vCamera(25.0f, 25.0f, -20.0f);
+D3DXVECTOR3 g_vLookat(10.0f, 5.0f, 10.0f);
 
 // The structure of a vertex in our vertex buffer...
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_NORMAL)
@@ -52,6 +54,9 @@ HRESULT SetupD3D(HWND hWnd)
 
 	// Enable the Z buffer, since we're dealing with 3D geometry.
 	g_pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+	// Enable culling.
+	g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
 
 	return S_OK;
 }
@@ -75,26 +80,29 @@ void CleanUp()
 // Define a cube, with associated vertex normals.
 HRESULT SetupGeometry()
 {
-	//ADD ALL g_Blocks TO BLOCKSVECTOR
-	ColourData blue;
-	blue.r = 0.0f;
-	blue.g = 0.8f;
-	blue.b = 0.8f;
+	//create the world
 
-	ColourData red;
-	red.r = 0.8f;
-	red.g = 0.0f;
-	red.b = 0.8f;
+	//outer grass
+	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, Utils::Green);
+	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, Utils::Green);
+	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, Utils::Green);
+	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, Utils::Green);
 
-	LegoBlock a(0, 0, 0, blue);
-	LegoBlock b(3, 3, 3, red);
-	LegoBlock c(0, 3, 0, blue);
+	//road
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, Utils::Grey);
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, Utils::Grey);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, Utils::Grey);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, Utils::Grey);
 
-	g_Blocks.push_back(a);
-	g_Blocks.push_back(b);
-	g_Blocks.push_back(c);
+	//center grass and house
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, Utils::Green);
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, Utils::Red);
 
-	//THEN ADD ALL CONTENTS OF BLOCKS TO pVertices
+
+
+
+
+
 
 	// Calculate the number of vertices required, and the size of the buffer to hold them.
 	int BufferSize = LegoBlock::VertNum * sizeof(CUSTOMVERTEX);

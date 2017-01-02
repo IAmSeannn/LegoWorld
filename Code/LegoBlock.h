@@ -2,13 +2,7 @@
 #include "CUSTOMVERTEX.h"
 #include <memory>
 #include <d3dx9.h>		// Direct 3D library (for all Direct 3D funtions).
-
-struct ColourData
-{
-	float r;
-	float g;
-	float b;
-};
+#include "ColourData.h"
 
 class LegoBlock
 {
