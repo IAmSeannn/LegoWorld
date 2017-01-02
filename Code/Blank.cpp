@@ -62,7 +62,7 @@ HRESULT SetupD3D(HWND hWnd)
 // If not, the program will crash at this point.
 void CleanUp()
 {
-	for (LegoBlock b : g_Blocks)
+	for (LegoBlock &b : g_Blocks)
 	{
 		if (b.pVertexBuffer != NULL)	b.pVertexBuffer->Release();
 	}
@@ -81,8 +81,13 @@ HRESULT SetupGeometry()
 	blue.g = 0.8f;
 	blue.b = 0.8f;
 
+	ColourData red;
+	red.r = 0.8f;
+	red.g = 0.0f;
+	red.b = 0.8f;
+
 	LegoBlock a(0, 0, 0, blue);
-	LegoBlock b(3, 3, 3, blue);
+	LegoBlock b(3, 3, 3, red);
 	LegoBlock c(0, 3, 0, blue);
 
 	g_Blocks.push_back(a);
@@ -96,18 +101,13 @@ HRESULT SetupGeometry()
 	CUSTOMVERTEX * pVertices;
 
 	//now create a buffer for each block
-	for (LegoBlock b : g_Blocks)
+	for (LegoBlock &b : g_Blocks)
 	{
-		if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &b.pVertexBuffer, NULL)))
+		if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &(b.pVertexBuffer), NULL)))
 		{
 			return E_FAIL; // if the vertex buffer culd not be created.
 		}
 
-		// Fill the buffer with appropriate vertices to describe the rectangle.
-		// The rectangle will be made from two triangles...
-
-		// Create a pointer to the first vertex in the buffer
-		// Also lock it, so nothing else can touch it while the values are being inserted.
 		if (FAILED(b.pVertexBuffer->Lock(0, 0, (void**)&pVertices, 0)))
 		{
 			return E_FAIL;  // if the pointer to the vertex buffer could not be established.
@@ -190,7 +190,7 @@ void Render()
 		g_pd3dDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 
 		// Render all the blocks
-		for (LegoBlock b : g_Blocks)
+		for (LegoBlock &b : g_Blocks)
 		{
 			D3DXMATRIX TranslateMat;
 			SetupMaterial(b.Colour);
