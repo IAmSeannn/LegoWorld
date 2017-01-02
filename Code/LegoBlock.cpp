@@ -4,15 +4,11 @@ LegoBlock::~LegoBlock()
 {
 }
 
-void LegoBlock::AddVertices(CUSTOMVERTEX * Verts, std::shared_ptr<int> i)
+void LegoBlock::AddVertices(CUSTOMVERTEX * verts)
 {
-	//give block relavent knowledge
-	pVertices = Verts;
-	counter = i;
-	int old = *counter;
-
+	pVertices = verts;
+	counter = 0;
 	//maths are for a 2x2 lego block
-
 	//front face
 	AddFaceVertical(x, y, z, x + 2, y + 1, z);
 
@@ -32,7 +28,7 @@ void LegoBlock::AddVertices(CUSTOMVERTEX * Verts, std::shared_ptr<int> i)
 	AddFaceHorizontal(x, y, z + 2, x + 2, y, z);
 
 	//start again and add normals
-	*counter = old;
+	counter = 0;
 
 	//front normals
 	AddNormal(0.0, 0.0, -1.0);
@@ -51,102 +47,100 @@ void LegoBlock::AddVertices(CUSTOMVERTEX * Verts, std::shared_ptr<int> i)
 
 	//bottom normal
 	AddNormal(0.0, -1.0, 0.0);
-	
-
 }
 
 void LegoBlock::AddFaceHorizontal(float x1, float y1, float z1, float x2, float y2, float z2)
 {
 	//triangle 1
-	pVertices[*counter].position.x = x1;
-	pVertices[*counter].position.y = y1;
-	pVertices[*counter].position.z = z1;
-	pVertices[*counter].colour = 0x00ff0000; // (red)
+	pVertices[counter].position.x = x1;
+	pVertices[counter].position.y = y1;
+	pVertices[counter].position.z = z1;
+	pVertices[counter].colour = 0x00ff0000; // (red)
 
-	(*counter)++;
+	counter++;
 
-	pVertices[*counter].position.x = x1;
-	pVertices[*counter].position.y = y2;
-	pVertices[*counter].position.z = z2;
-	pVertices[*counter].colour = 0x00ff0000; // (yellow)
+	pVertices[counter].position.x = x1;
+	pVertices[counter].position.y = y2;
+	pVertices[counter].position.z = z2;
+	pVertices[counter].colour = 0x00ff0000; // (yellow)
 
-	(*counter)++;
+	counter++;
 
-	pVertices[*counter].position.x = x2;
-	pVertices[*counter].position.y = y2;
-	pVertices[*counter].position.z = z2;
-	pVertices[*counter].colour = 0x00ff0000; // (green)
+	pVertices[counter].position.x = x2;
+	pVertices[counter].position.y = y2;
+	pVertices[counter].position.z = z2;
+	pVertices[counter].colour = 0x00ff0000; // (green)
 
-	(*counter)++;
+	counter++;
 
 	//triangle 2
-	pVertices[*counter].position.x = x2;
-	pVertices[*counter].position.y = y2;
-	pVertices[*counter].position.z = z2;
-	pVertices[*counter].colour = 0x00ff0000; // (red)
+	pVertices[counter].position.x = x2;
+	pVertices[counter].position.y = y2;
+	pVertices[counter].position.z = z2;
+	pVertices[counter].colour = 0x00ff0000; // (red)
 
-	(*counter)++;
+	counter++;
 
-	pVertices[*counter].position.x = x2;
-	pVertices[*counter].position.y = y1;
-	pVertices[*counter].position.z = z1;
-	pVertices[*counter].colour = 0x00ff0000; // (yellow)
+	pVertices[counter].position.x = x2;
+	pVertices[counter].position.y = y1;
+	pVertices[counter].position.z = z1;
+	pVertices[counter].colour = 0x00ff0000; // (yellow)
 
-	(*counter)++;
+	counter++;
 
-	pVertices[*counter].position.x = x1;
-	pVertices[*counter].position.y = y1;
-	pVertices[*counter].position.z = z1;
-	pVertices[*counter].colour = 0x00ff0000; // (green)
+	pVertices[counter].position.x = x1;
+	pVertices[counter].position.y = y1;
+	pVertices[counter].position.z = z1;
+	pVertices[counter].colour = 0x00ff0000; // (green)
 
-	(*counter)++;
+	counter++;
 }
 
 void LegoBlock::AddFaceVertical(float x1, float y1, float z1, float x2, float y2, float z2)
 {
 	//triangle 1
-	pVertices[*counter].position.x = x1;
-	pVertices[*counter].position.y = y1;
-	pVertices[*counter].position.z = z1;
-	pVertices[*counter].colour = 0x00ff0000; // (red)
+	pVertices[counter].position.x = x1;
+	pVertices[counter].position.y = y1;
+	pVertices[counter].position.z = z1;
+	pVertices[counter].colour = 0x00ff0000; // (red)
 
-	(*counter)++;
+	counter++;
 
-	pVertices[*counter].position.x = x1;
-	pVertices[*counter].position.y = y2;
-	pVertices[*counter].position.z = z1;
-	pVertices[*counter].colour = 0x00ff0000; // (yellow)
+	pVertices[counter].position.x = x1;
+	pVertices[counter].position.y = y2;
+	pVertices[counter].position.z = z1;
+	pVertices[counter].colour = 0x00ff0000; // (yellow)
 
-	(*counter)++;
+	counter++;
 
-	pVertices[*counter].position.x = x2;
-	pVertices[*counter].position.y = y2;
-	pVertices[*counter].position.z = z2;
-	pVertices[*counter].colour = 0x00ff0000; // (green)
+	pVertices[counter].position.x = x2;
+	pVertices[counter].position.y = y2;
+	pVertices[counter].position.z = z2;
+	pVertices[counter].colour = 0x00ff0000; // (green)
 
-	(*counter)++;
+	counter++;
 
 	//triangle 2
-	pVertices[*counter].position.x = x2;
-	pVertices[*counter].position.y = y2;
-	pVertices[*counter].position.z = z2;
-	pVertices[*counter].colour = 0x00ff0000; // (red)
+	pVertices[counter].position.x = x2;
+	pVertices[counter].position.y = y2;
+	pVertices[counter].position.z = z2;
+	pVertices[counter].colour = 0x00ff0000; // (red)
 
-	(*counter)++;
+	counter++;
 
-	pVertices[*counter].position.x = x2;
-	pVertices[*counter].position.y = y1;
-	pVertices[*counter].position.z = z2;
-	pVertices[*counter].colour = 0x00ff0000; // (yellow)
+	pVertices[counter].position.x = x2;
+	pVertices[counter].position.y = y1;
+	pVertices[counter].position.z = z2;
+	pVertices[counter].colour = 0x00ff0000; // (yellow)
 
-	(*counter)++;
+	counter++;
 
-	pVertices[*counter].position.x = x1;
-	pVertices[*counter].position.y = y1;
-	pVertices[*counter].position.z = z1;
-	pVertices[*counter].colour = 0x00ff0000; // (green)
+	pVertices[counter].position.x = x1;
+	pVertices[counter].position.y = y1;
+	pVertices[counter].position.z = z1;
+	pVertices[counter].colour = 0x00ff0000; // (green)
 
-	(*counter)++;
+	counter++;
 }
 
 void LegoBlock::AddNormal(float x, float y, float z)
@@ -154,11 +148,10 @@ void LegoBlock::AddNormal(float x, float y, float z)
 	for (int i = 0; i <= 5; i++)
 	{
 
-		pVertices[*counter].normal.x = x;
-		pVertices[*counter].normal.x = y;
-		pVertices[*counter].normal.x = z;
+		pVertices[counter].normal.x = x;
+		pVertices[counter].normal.x = y;
+		pVertices[counter].normal.x = z;
 
-		(*counter)++;
+		counter++;
 	}
 }
-

@@ -17,7 +17,6 @@
 
 LPDIRECT3D9             g_pD3D = NULL; // Used to create the D3DDevice
 LPDIRECT3DDEVICE9       g_pd3dDevice = NULL; // The rendering device
-LPDIRECT3DVERTEXBUFFER9 g_pVertexBuffer = NULL; // Buffer to hold vertices
 std::vector<LegoBlock> g_Blocks;
 D3DXVECTOR3 g_vCamera(50.0f, 50.0f, -40.0f);
 D3DXVECTOR3 g_vLookat(10.0f, 10.0f, 0.0f);
@@ -63,9 +62,12 @@ HRESULT SetupD3D(HWND hWnd)
 // If not, the program will crash at this point.
 void CleanUp()
 {
-	if (g_pVertexBuffer != NULL)		g_pVertexBuffer->Release();
-	if (g_pd3dDevice != NULL)	g_pd3dDevice->Release();
-	if (g_pD3D != NULL)			g_pD3D->Release();
+	for (LegoBlock b : g_Blocks)
+	{
+		if (b.pVertexBuffer != NULL)	b.pVertexBuffer->Release();
+	}
+	if (g_pd3dDevice != NULL)			g_pd3dDevice->Release();
+	if (g_pD3D != NULL)					g_pD3D->Release();
 }
 
 //-----------------------------------------------------------------------------
@@ -74,10 +76,14 @@ void CleanUp()
 HRESULT SetupGeometry()
 {
 	//ADD ALL g_Blocks TO BLOCKSVECTOR
+	ColourData blue;
+	blue.r = 0.0f;
+	blue.g = 0.8f;
+	blue.b = 0.8f;
 
-	LegoBlock a(0, 0, 0);
-	LegoBlock b(3, 3, 3);
-	LegoBlock c(0, 3, 0);
+	LegoBlock a(0, 0, 0, blue);
+	LegoBlock b(3, 3, 3, blue);
+	LegoBlock c(0, 3, 0, blue);
 
 	g_Blocks.push_back(a);
 	g_Blocks.push_back(b);
@@ -86,53 +92,33 @@ HRESULT SetupGeometry()
 	//THEN ADD ALL CONTENTS OF BLOCKS TO pVertices
 
 	// Calculate the number of vertices required, and the size of the buffer to hold them.
-	int Vertices = LegoBlock::VertNum * g_Blocks.size();
-	int BufferSize = Vertices * sizeof(CUSTOMVERTEX);
+	int BufferSize = LegoBlock::VertNum * sizeof(CUSTOMVERTEX);
+	CUSTOMVERTEX * pVertices;
 
-	// Now get Direct3D to create the vertex buffer.
-	// The vertex buffer for the rectangle doesn't exist at this point, but the pointer to
-	// it does (g_pVertexBuffer)
-	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &g_pVertexBuffer, NULL)))
-	{
-		return E_FAIL; // if the vertex buffer culd not be created.
-	}
-
-	// Fill the buffer with appropriate vertices to describe the rectangle.
-	// The rectangle will be made from two triangles...
-
-	// Create a pointer to the first vertex in the buffer
-	// Also lock it, so nothing else can touch it while the values are being inserted.
-	CUSTOMVERTEX* pVertices;
-	if (FAILED(g_pVertexBuffer->Lock(0, 0, (void**)&pVertices, 0)))
-	{
-		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
-	}
-
-	// Fill the vertex buffers with data...
-
-	std::shared_ptr<int> counter(new int(0));
+	//now create a buffer for each block
 	for (LegoBlock b : g_Blocks)
 	{
-		b.AddVertices(pVertices, counter);
-	}
+		if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &b.pVertexBuffer, NULL)))
+		{
+			return E_FAIL; // if the vertex buffer culd not be created.
+		}
 
+		// Fill the buffer with appropriate vertices to describe the rectangle.
+		// The rectangle will be made from two triangles...
 
-	// Unlock the vertex buffer...
-	g_pVertexBuffer->Unlock();
+		// Create a pointer to the first vertex in the buffer
+		// Also lock it, so nothing else can touch it while the values are being inserted.
+		if (FAILED(b.pVertexBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+		{
+			return E_FAIL;  // if the pointer to the vertex buffer could not be established.
+		}
+
+		b.AddVertices(pVertices);
+
+		b.pVertexBuffer->Unlock();
+	}	
 
 	return S_OK;
-}
-// Set up a vertex data.
-void SetupVertexWithNormalGeometry(CUSTOMVERTEX* pV, int index,
-	float px, float py, float pz,
-	float nx, float ny, float nz)
-{
-	pV[index].position.x = px;	// Vertex co-ordinate.
-	pV[index].position.y = py;
-	pV[index].position.z = pz;
-	pV[index].normal.x = nx;	// Vertex normal.
-	pV[index].normal.y = ny;
-	pV[index].normal.z = nz;
 }
 
 //-----------------------------------------------------------------------------
@@ -155,15 +141,15 @@ void SetupViewMatrices()
 
 //---------------------------------------------------------------------------------
 
-void SetupMaterial(float r, float g, float b)
+void SetupMaterial(ColourData col)
 {
 	// Define a material.
 	// Reflects only diffuse colour.
 	D3DMATERIAL9 Mtl;
 	ZeroMemory(&Mtl, sizeof(D3DMATERIAL9));
-	Mtl.Diffuse.r = r;
-	Mtl.Diffuse.g = g;
-	Mtl.Diffuse.b = b;
+	Mtl.Diffuse.r = col.r;
+	Mtl.Diffuse.g = col.g;
+	Mtl.Diffuse.b = col.b;
 	Mtl.Diffuse.a = 1.0f;
 	g_pd3dDevice->SetMaterial(&Mtl);
 }
@@ -202,14 +188,17 @@ void Render()
 		SetupViewMatrices();
 
 		g_pd3dDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
-		D3DXMATRIX TranslateMat;
 
-		// Render the cube.
-		SetupMaterial(0.0f, 0.8f, 0.8f);
-		D3DXMatrixTranslation(&TranslateMat, 0, 0, 0);
-		g_pd3dDevice->SetTransform(D3DTS_WORLD, &TranslateMat);
-		g_pd3dDevice->SetStreamSource(0, g_pVertexBuffer, 0, sizeof(CUSTOMVERTEX));
-		g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, (g_Blocks.size() * (LegoBlock::VertNum / 3)));
+		// Render all the blocks
+		for (LegoBlock b : g_Blocks)
+		{
+			D3DXMATRIX TranslateMat;
+			SetupMaterial(b.Colour);
+			D3DXMatrixTranslation(&TranslateMat, 0, 0, 0);
+			g_pd3dDevice->SetTransform(D3DTS_WORLD, &TranslateMat);
+			g_pd3dDevice->SetStreamSource(0, b.pVertexBuffer, 0, sizeof(CUSTOMVERTEX));
+			g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, LegoBlock::VertNum / 3);
+		}
 
 		// End the scene.
 		g_pd3dDevice->EndScene();
@@ -303,8 +292,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 
 			// Set up the light.
 			SetupDirectionalLight();
-
-			
 
 			// Enter the message loop
 			MSG msg;
