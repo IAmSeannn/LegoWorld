@@ -95,8 +95,17 @@ void CleanUp()
 
 void SetupLegos()
 {
-	//std::shared_ptr<LegoBlock> b(new LegoBlock(5, 5, 1, Utils::Green));
-	//g_Blocks.push_back(b);
+	/*std::shared_ptr<LegoBlock> a(new LegoBlock(0, 0, 0, Utils::Green));
+	g_Blocks.push_back(a);
+
+	std::shared_ptr<LegoBlock> b(new LegoBlock(1, 0, 0, Utils::Green));
+	g_Blocks.push_back(b);
+
+	std::shared_ptr<LegoBlock> c(new LegoBlock(2, 0, 0, Utils::Green));
+	g_Blocks.push_back(c);
+
+	std::shared_ptr<LegoBlock> d(new LegoBlock(1, 0, 1, Utils::Green));
+	g_Blocks.push_back(d);*/
 
 	//create the world
 	//outer grass
@@ -118,6 +127,11 @@ void SetupLegos()
 	////create moving block
 	//std::shared_ptr<LegoBlock> b(new LegoBlock(6, 1, 6, Utils::Red));
 	//g_Blocks.push_back(b);
+
+	for (std::shared_ptr<LegoBlock> &b : g_Blocks)
+	{
+		b->SetCovereds(g_Blocks);
+	}
 }
 
 //-----------------------------------------------------------------------------
