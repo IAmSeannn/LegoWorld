@@ -55,21 +55,18 @@ void LegoBlock::AddFaceHorizontal(float x1, float y1, float z1, float x2, float 
 	pVertices[counter].position.x = x1;
 	pVertices[counter].position.y = y1;
 	pVertices[counter].position.z = z1;
-	pVertices[counter].colour = 0x00ff0000; // (red)
 
 	counter++;
 
 	pVertices[counter].position.x = x1;
 	pVertices[counter].position.y = y2;
 	pVertices[counter].position.z = z2;
-	pVertices[counter].colour = 0x00ff0000; // (yellow)
 
 	counter++;
 
 	pVertices[counter].position.x = x2;
 	pVertices[counter].position.y = y2;
 	pVertices[counter].position.z = z2;
-	pVertices[counter].colour = 0x00ff0000; // (green)
 
 	counter++;
 
@@ -77,21 +74,18 @@ void LegoBlock::AddFaceHorizontal(float x1, float y1, float z1, float x2, float 
 	pVertices[counter].position.x = x2;
 	pVertices[counter].position.y = y2;
 	pVertices[counter].position.z = z2;
-	pVertices[counter].colour = 0x00ff0000; // (red)
 
 	counter++;
 
 	pVertices[counter].position.x = x2;
 	pVertices[counter].position.y = y1;
 	pVertices[counter].position.z = z1;
-	pVertices[counter].colour = 0x00ff0000; // (yellow)
 
 	counter++;
 
 	pVertices[counter].position.x = x1;
 	pVertices[counter].position.y = y1;
 	pVertices[counter].position.z = z1;
-	pVertices[counter].colour = 0x00ff0000; // (green)
 
 	counter++;
 }
@@ -102,21 +96,18 @@ void LegoBlock::AddFaceVertical(float x1, float y1, float z1, float x2, float y2
 	pVertices[counter].position.x = x1;
 	pVertices[counter].position.y = y1;
 	pVertices[counter].position.z = z1;
-	pVertices[counter].colour = 0x00ff0000; // (red)
 
 	counter++;
 
 	pVertices[counter].position.x = x1;
 	pVertices[counter].position.y = y2;
 	pVertices[counter].position.z = z1;
-	pVertices[counter].colour = 0x00ff0000; // (yellow)
 
 	counter++;
 
 	pVertices[counter].position.x = x2;
 	pVertices[counter].position.y = y2;
 	pVertices[counter].position.z = z2;
-	pVertices[counter].colour = 0x00ff0000; // (green)
 
 	counter++;
 
@@ -124,21 +115,18 @@ void LegoBlock::AddFaceVertical(float x1, float y1, float z1, float x2, float y2
 	pVertices[counter].position.x = x2;
 	pVertices[counter].position.y = y2;
 	pVertices[counter].position.z = z2;
-	pVertices[counter].colour = 0x00ff0000; // (red)
 
 	counter++;
 
 	pVertices[counter].position.x = x2;
 	pVertices[counter].position.y = y1;
 	pVertices[counter].position.z = z2;
-	pVertices[counter].colour = 0x00ff0000; // (yellow)
 
 	counter++;
 
 	pVertices[counter].position.x = x1;
 	pVertices[counter].position.y = y1;
 	pVertices[counter].position.z = z1;
-	pVertices[counter].colour = 0x00ff0000; // (green)
 
 	counter++;
 }
@@ -149,8 +137,8 @@ void LegoBlock::AddNormal(float x, float y, float z)
 	{
 
 		pVertices[counter].normal.x = x;
-		pVertices[counter].normal.x = y;
-		pVertices[counter].normal.x = z;
+		pVertices[counter].normal.y = y;
+		pVertices[counter].normal.z = z;
 
 		counter++;
 	}

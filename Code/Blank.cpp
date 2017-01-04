@@ -125,7 +125,7 @@ HRESULT SetupGeometry()
 		b.AddVertices(pVertices);
 
 		b.pVertexBuffer->Unlock();
-	}	
+	}
 
 	return S_OK;
 }
@@ -170,15 +170,19 @@ void SetupDirectionalLight()
 	// Possesses only a diffuse colour.
 	D3DLIGHT9 SampleLight;
 	ZeroMemory(&SampleLight, sizeof(D3DLIGHT9));
-	SampleLight.Type = D3DLIGHT_DIRECTIONAL;
+	SampleLight.Type = D3DLIGHT_POINT;
 
 	SampleLight.Diffuse.r = 1.0f;
 	SampleLight.Diffuse.g = 1.0f;
 	SampleLight.Diffuse.b = 1.0f;
 
-	SampleLight.Direction = D3DXVECTOR3(-1, -1, 0); // Light points along -ve X axis.
+	SampleLight.Position = D3DXVECTOR3(50.0f, 50.0f, 50.0f);
+	SampleLight.Attenuation0 = 1.0f;
+	SampleLight.Attenuation1 = 0.0f;
+	SampleLight.Attenuation2 = 0.0f;
+	SampleLight.Range = 300.0f;
 
-													// Select and enable the light.
+	// Select and enable the light.
 	g_pd3dDevice->SetLight(0, &SampleLight);
 	g_pd3dDevice->LightEnable(0, TRUE);
 }
