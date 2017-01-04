@@ -20,7 +20,19 @@
 
 LPDIRECT3D9             g_pD3D = NULL; // Used to create the D3DDevice
 LPDIRECT3DDEVICE9       g_pd3dDevice = NULL; // The rendering device
-std::vector<LegoBlock>  g_Blocks;
+
+
+//basic buffers
+LPDIRECT3DVERTEXBUFFER9 pTopBuffer = NULL; // Buffer to hold vertices of basic block
+LPDIRECT3DVERTEXBUFFER9 pBottomBuffer = NULL; // Buffer to hold vertices of basic block
+LPDIRECT3DVERTEXBUFFER9 pFrontBuffer = NULL; // Buffer to hold vertices of basic block
+LPDIRECT3DVERTEXBUFFER9 pLeftBuffer = NULL; // Buffer to hold vertices of basic block
+LPDIRECT3DVERTEXBUFFER9 pRightBuffer = NULL; // Buffer to hold vertices of basic block
+LPDIRECT3DVERTEXBUFFER9 pBackBuffer = NULL; // Buffer to hold vertices of basic block
+
+
+//std::vector<LegoBlock>  g_Blocks;
+std::vector<std::shared_ptr<LegoBlock>> g_Blocks;
 D3DXVECTOR3 g_vCamera(25.0f, 25.0f, -20.0f);
 D3DXVECTOR3 g_vLookat(10.0f, 5.0f, 10.0f);
 
@@ -68,19 +80,24 @@ HRESULT SetupD3D(HWND hWnd)
 // If not, the program will crash at this point.
 void CleanUp()
 {
-	for (LegoBlock &b : g_Blocks)
-	{
-		if (b.pVertexBuffer != NULL)	b.pVertexBuffer->Release();
-	}
-	if (g_pd3dDevice != NULL)			g_pd3dDevice->Release();
-	if (g_pD3D != NULL)					g_pD3D->Release();
+
+	if (pTopBuffer != NULL)					pTopBuffer->Release();
+	if (pBottomBuffer != NULL)				pTopBuffer->Release();
+	if (pFrontBuffer != NULL)				pTopBuffer->Release();
+	if (pLeftBuffer != NULL)				pTopBuffer->Release();
+	if (pRightBuffer != NULL)				pTopBuffer->Release();
+	if (pBackBuffer != NULL)				pTopBuffer->Release();
+
+
+	if (g_pd3dDevice != NULL)				g_pd3dDevice->Release();
+	if (g_pD3D != NULL)						g_pD3D->Release();
 }
 
-//-----------------------------------------------------------------------------
-// Set up the scene geometry.
-// Define a cube, with associated vertex normals.
-HRESULT SetupGeometry()
+void SetupLegos()
 {
+	//std::shared_ptr<LegoBlock> b(new LegoBlock(5, 5, 1, Utils::Green));
+	//g_Blocks.push_back(b);
+
 	//create the world
 	//outer grass
 	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, Utils::Green);
@@ -98,36 +115,150 @@ HRESULT SetupGeometry()
 	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, Utils::Green);
 	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, Utils::Red);
 
-	//create moving block
-	MoveableBlock b(6, 1, 6, Utils::Red);
-	g_Blocks.push_back(b);
+	////create moving block
+	//std::shared_ptr<LegoBlock> b(new LegoBlock(6, 1, 6, Utils::Red));
+	//g_Blocks.push_back(b);
+}
 
+//-----------------------------------------------------------------------------
+// Set up the scene geometry.
+// Define a cube, with associated vertex normals.
+HRESULT SetupGeometry()
+{
+	void SetupVertexWithNormalGeometry(CUSTOMVERTEX* pV, int index,
+		float px, float py, float pz,
+		float nx, float ny, float nz);
 
+	int BufferSize = 6 * sizeof(CUSTOMVERTEX);
+	CUSTOMVERTEX *pVertices;
 
-
-	// Calculate the number of vertices required, and the size of the buffer to hold them.
-	int BufferSize = LegoBlock::VertNum * sizeof(CUSTOMVERTEX);
-	CUSTOMVERTEX * pVertices;
-
-	//now create a buffer for each block
-	for (LegoBlock &b : g_Blocks)
+	// Create the vertex buffer.
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pTopBuffer, NULL)))
 	{
-		if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &(b.pVertexBuffer), NULL)))
-		{
-			return E_FAIL; // if the vertex buffer culd not be created.
-		}
-
-		if (FAILED(b.pVertexBuffer->Lock(0, 0, (void**)&pVertices, 0)))
-		{
-			return E_FAIL;  // if the pointer to the vertex buffer could not be established.
-		}
-
-		b.AddVertices(pVertices);
-
-		b.pVertexBuffer->Unlock();
+		return E_FAIL; // if the vertex buffer could not be created.
 	}
+	if (FAILED(pTopBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+	{
+		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
+	}
+	// Side 1 - Front face
+	SetupVertexWithNormalGeometry(pVertices, 0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0);
+	SetupVertexWithNormalGeometry(pVertices, 1, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0);
+	SetupVertexWithNormalGeometry(pVertices, 2, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0);
+	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0);
+	SetupVertexWithNormalGeometry(pVertices, 4, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0);
+	SetupVertexWithNormalGeometry(pVertices, 5, 1.0, 1.0, 0.0, 0.0, 0.0, -1.0);
+	pTopBuffer->Unlock();
+
+
+	// Create the vertex buffer.
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pBottomBuffer, NULL)))
+	{
+		return E_FAIL; // if the vertex buffer could not be created.
+	}
+	if (FAILED(pBottomBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+	{
+		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
+	}
+	// Side 2 - Right face
+	SetupVertexWithNormalGeometry(pVertices, 0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 1, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 2, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 4, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 5, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0);
+	pBottomBuffer->Unlock();
+
+	// Create the vertex buffer.
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pFrontBuffer, NULL)))
+	{
+		return E_FAIL; // if the vertex buffer could not be created.
+	}
+	if (FAILED(pFrontBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+	{
+		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
+	}
+	// Side 3 - Rear face
+	SetupVertexWithNormalGeometry(pVertices, 0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0);
+	SetupVertexWithNormalGeometry(pVertices, 1, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0);
+	SetupVertexWithNormalGeometry(pVertices, 2, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0);
+	SetupVertexWithNormalGeometry(pVertices, 3, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0);
+	SetupVertexWithNormalGeometry(pVertices, 4, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0);
+	SetupVertexWithNormalGeometry(pVertices, 5, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0);
+	pFrontBuffer->Unlock();
+
+	// Create the vertex buffer.
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pLeftBuffer, NULL)))
+	{
+		return E_FAIL; // if the vertex buffer could not be created.
+	}
+	if (FAILED(pLeftBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+	{
+		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
+	}
+	// Side 4 - Left face
+	SetupVertexWithNormalGeometry(pVertices, 0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 1, 0.0, 1.0, 1.0, -1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 2, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 3, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 4, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 5, 0.0, 1.0, 1.0, -1.0, 0.0, 0.0);
+	pLeftBuffer->Unlock();
+
+	// Create the vertex buffer.
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pRightBuffer, NULL)))
+	{
+		return E_FAIL; // if the vertex buffer could not be created.
+	}
+	if (FAILED(pRightBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+	{
+		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
+	}
+	// Side 5 - Top face
+	SetupVertexWithNormalGeometry(pVertices, 0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 1, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 2, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 4, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 5, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0);
+	pRightBuffer->Unlock();
+
+	// Create the vertex buffer.
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pBackBuffer, NULL)))
+	{
+		return E_FAIL; // if the vertex buffer could not be created.
+	}
+	if (FAILED(pBackBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+	{
+		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
+	}
+	// Side 6 - Bottom face
+	SetupVertexWithNormalGeometry(pVertices, 0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 1, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 2, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 4, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 5, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0);
+	// Unlock the Cube vertex buffer
+	pBackBuffer->Unlock();
+
+	//set up all the blocks
+	SetupLegos();
 
 	return S_OK;
+}
+
+// Set up a vertex data.
+void SetupVertexWithNormalGeometry(CUSTOMVERTEX* pV, int index,
+	float px, float py, float pz,
+	float nx, float ny, float nz)
+{
+	pV[index].position.x = px;	// Vertex co-ordinate.
+	pV[index].position.y = py;
+	pV[index].position.z = pz;
+	pV[index].normal.x = nx;	// Vertex normal.
+	pV[index].normal.y = ny;
+	pV[index].normal.z = nz;
 }
 
 //-----------------------------------------------------------------------------
@@ -203,14 +334,46 @@ void Render()
 		g_pd3dDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 
 		// Render all the blocks
-		for (LegoBlock &b : g_Blocks)
+		for (std::shared_ptr<LegoBlock> &b : g_Blocks)
 		{
-			D3DXMATRIX TranslateMat;
-			SetupMaterial(b.Colour);
-			D3DXMatrixTranslation(&TranslateMat, 0, 0, 0);
-			g_pd3dDevice->SetTransform(D3DTS_WORLD, &TranslateMat);
-			g_pd3dDevice->SetStreamSource(0, b.pVertexBuffer, 0, sizeof(CUSTOMVERTEX));
-			g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, LegoBlock::VertNum / 3);
+			SetupMaterial(b->Colour);
+			g_pd3dDevice->SetTransform(D3DTS_WORLD, &b->TranslateMat);
+			//top
+			if (!b->TopCovered)
+			{
+				g_pd3dDevice->SetStreamSource(0, pTopBuffer, 0, sizeof(CUSTOMVERTEX));
+				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+			}
+			//bottom
+			if (!b->BottomCovered)
+			{
+				g_pd3dDevice->SetStreamSource(0, pBottomBuffer, 0, sizeof(CUSTOMVERTEX));
+				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+			}
+			//front
+			if (!b->FrontCovered)
+			{
+				g_pd3dDevice->SetStreamSource(0, pFrontBuffer, 0, sizeof(CUSTOMVERTEX));
+				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+			}
+			//left
+			if (!b->LeftCovered)
+			{
+				g_pd3dDevice->SetStreamSource(0, pLeftBuffer, 0, sizeof(CUSTOMVERTEX));
+				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+			}
+			//right
+			if (!b->RightCovered)
+			{
+				g_pd3dDevice->SetStreamSource(0, pRightBuffer, 0, sizeof(CUSTOMVERTEX));
+				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+			}
+			//back
+			if (!b->BackCovered)
+			{
+				g_pd3dDevice->SetStreamSource(0, pBackBuffer, 0, sizeof(CUSTOMVERTEX));
+				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+			}
 		}
 
 		// End the scene.
