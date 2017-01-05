@@ -147,11 +147,11 @@ HRESULT SetupGeometry()
 	CUSTOMVERTEX *pVertices;
 
 	// Create the vertex buffer.
-	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pTopBuffer, NULL)))
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pFrontBuffer, NULL)))
 	{
 		return E_FAIL; // if the vertex buffer could not be created.
 	}
-	if (FAILED(pTopBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+	if (FAILED(pFrontBuffer->Lock(0, 0, (void**)&pVertices, 0)))
 	{
 		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
 	}
@@ -162,15 +162,15 @@ HRESULT SetupGeometry()
 	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0);
 	SetupVertexWithNormalGeometry(pVertices, 4, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0);
 	SetupVertexWithNormalGeometry(pVertices, 5, 1.0, 1.0, 0.0, 0.0, 0.0, -1.0);
-	pTopBuffer->Unlock();
+	pFrontBuffer->Unlock();
 
 
 	// Create the vertex buffer.
-	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pBottomBuffer, NULL)))
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pRightBuffer, NULL)))
 	{
 		return E_FAIL; // if the vertex buffer could not be created.
 	}
-	if (FAILED(pBottomBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+	if (FAILED(pRightBuffer->Lock(0, 0, (void**)&pVertices, 0)))
 	{
 		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
 	}
@@ -181,14 +181,14 @@ HRESULT SetupGeometry()
 	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0);
 	SetupVertexWithNormalGeometry(pVertices, 4, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0);
 	SetupVertexWithNormalGeometry(pVertices, 5, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0);
-	pBottomBuffer->Unlock();
+	pRightBuffer->Unlock();
 
 	// Create the vertex buffer.
-	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pFrontBuffer, NULL)))
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pBackBuffer, NULL)))
 	{
 		return E_FAIL; // if the vertex buffer could not be created.
 	}
-	if (FAILED(pFrontBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+	if (FAILED(pBackBuffer->Lock(0, 0, (void**)&pVertices, 0)))
 	{
 		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
 	}
@@ -199,7 +199,7 @@ HRESULT SetupGeometry()
 	SetupVertexWithNormalGeometry(pVertices, 3, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0);
 	SetupVertexWithNormalGeometry(pVertices, 4, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0);
 	SetupVertexWithNormalGeometry(pVertices, 5, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0);
-	pFrontBuffer->Unlock();
+	pBackBuffer->Unlock();
 
 	// Create the vertex buffer.
 	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pLeftBuffer, NULL)))
@@ -220,11 +220,11 @@ HRESULT SetupGeometry()
 	pLeftBuffer->Unlock();
 
 	// Create the vertex buffer.
-	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pRightBuffer, NULL)))
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pTopBuffer, NULL)))
 	{
 		return E_FAIL; // if the vertex buffer could not be created.
 	}
-	if (FAILED(pRightBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+	if (FAILED(pTopBuffer->Lock(0, 0, (void**)&pVertices, 0)))
 	{
 		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
 	}
@@ -235,14 +235,14 @@ HRESULT SetupGeometry()
 	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0);
 	SetupVertexWithNormalGeometry(pVertices, 4, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0);
 	SetupVertexWithNormalGeometry(pVertices, 5, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0);
-	pRightBuffer->Unlock();
+	pTopBuffer->Unlock();
 
 	// Create the vertex buffer.
-	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pBackBuffer, NULL)))
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pBottomBuffer, NULL)))
 	{
 		return E_FAIL; // if the vertex buffer could not be created.
 	}
-	if (FAILED(pBackBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+	if (FAILED(pBottomBuffer->Lock(0, 0, (void**)&pVertices, 0)))
 	{
 		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
 	}
@@ -254,7 +254,7 @@ HRESULT SetupGeometry()
 	SetupVertexWithNormalGeometry(pVertices, 4, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0);
 	SetupVertexWithNormalGeometry(pVertices, 5, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0);
 	// Unlock the Cube vertex buffer
-	pBackBuffer->Unlock();
+	pBottomBuffer->Unlock();
 
 	//set up all the blocks
 	SetupLegos();
