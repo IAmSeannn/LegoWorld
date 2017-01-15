@@ -17,7 +17,11 @@ class LegoBlock
 public:
 	LegoBlock(float ix, float iy, float iz, ColourData col) : x(ix), y(iy), z(iz), Colour(col) 
 	{
-		D3DXMatrixTranslation(&TranslateMat, ix, iy, iz);
+		D3DXMatrixIdentity(&WorldMat);
+		D3DXMatrixTranslation(&TranslateMat, ix, iy*1.2f, iz);
+		D3DXMatrixScaling(&ScaleMat, 1.0f, 1.2f, 1.0f);
+		D3DXMatrixMultiply(&WorldMat, &WorldMat, &ScaleMat);		// First Scale
+		D3DXMatrixMultiply(&WorldMat, &WorldMat, &TranslateMat);	// And finally Translate
 		TopCovered = false;
 		BottomCovered = false;
 		RightCovered = false;
@@ -27,7 +31,7 @@ public:
 	};
 	~LegoBlock();
 	ColourData Colour;
-	D3DXMATRIX TranslateMat;
+	D3DXMATRIX WorldMat, TranslateMat, ScaleMat;
 	bool TopCovered, BottomCovered, RightCovered, LeftCovered, FrontCovered, BackCovered;
 	void SetCovereds(std::vector<std::shared_ptr<LegoBlock>>&);
 

@@ -24,9 +24,9 @@ LPDIRECT3DVERTEXBUFFER9 pFrontBuffer = NULL; // Buffer to hold vertices of basic
 LPDIRECT3DVERTEXBUFFER9 pLeftBuffer = NULL; // Buffer to hold vertices of basic block
 LPDIRECT3DVERTEXBUFFER9 pRightBuffer = NULL; // Buffer to hold vertices of basic block
 LPDIRECT3DVERTEXBUFFER9 pBackBuffer = NULL; // Buffer to hold vertices of basic block
+LPDIRECT3DVERTEXBUFFER9 pStudBuffer = NULL; // Buffer to hold vertices of basic block
 
 
-//std::vector<LegoBlock>  g_Blocks;
 std::vector<std::shared_ptr<LegoBlock>> g_Blocks;
 D3DXVECTOR3 g_vCamera(25.0f, 25.0f, -20.0f);
 D3DXVECTOR3 g_vLookat(10.0f, 5.0f, 10.0f);
@@ -65,6 +65,8 @@ HRESULT SetupD3D(HWND hWnd)
 	// Enable culling.
 	g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
+	g_pd3dDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
+
 
 	return S_OK;
 }
@@ -77,11 +79,12 @@ void CleanUp()
 {
 
 	if (pTopBuffer != NULL)					pTopBuffer->Release();
-	if (pBottomBuffer != NULL)				pTopBuffer->Release();
-	if (pFrontBuffer != NULL)				pTopBuffer->Release();
-	if (pLeftBuffer != NULL)				pTopBuffer->Release();
-	if (pRightBuffer != NULL)				pTopBuffer->Release();
-	if (pBackBuffer != NULL)				pTopBuffer->Release();
+	if (pBottomBuffer != NULL)				pBottomBuffer->Release();
+	if (pFrontBuffer != NULL)				pFrontBuffer->Release();
+	if (pLeftBuffer != NULL)				pLeftBuffer->Release();
+	if (pRightBuffer != NULL)				pRightBuffer->Release();
+	if (pBackBuffer != NULL)				pBackBuffer->Release();
+	if (pStudBuffer != NULL)					pStudBuffer->Release();
 
 
 	if (g_pd3dDevice != NULL)				g_pd3dDevice->Release();
@@ -251,6 +254,61 @@ HRESULT SetupGeometry()
 	// Unlock the Cube vertex buffer
 	pBottomBuffer->Unlock();
 
+	//create studs
+	// Create the vertex buffer.
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(30 * sizeof(CUSTOMVERTEX), 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pStudBuffer, NULL)))
+	{
+		return E_FAIL; // if the vertex buffer could not be created.
+	}
+	if (FAILED(pStudBuffer->Lock(0, 0, (void**)&pVertices, 0)))
+	{
+		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
+	}
+
+	//faces
+	// Side 1 - Front face
+	SetupVertexWithNormalGeometry(pVertices, 0, 0.2, 1.0, 0.2, 0.0, 0.0, -1.0);
+	SetupVertexWithNormalGeometry(pVertices, 1, 0.2, 1.5, 0.2, 0.0, 0.0, -1.0);
+	SetupVertexWithNormalGeometry(pVertices, 2, 0.8, 1.0, 0.2, 0.0, 0.0, -1.0);
+	SetupVertexWithNormalGeometry(pVertices, 3, 0.8, 1.0, 0.2, 0.0, 0.0, -1.0);
+	SetupVertexWithNormalGeometry(pVertices, 4, 0.2, 1.5, 0.2, 0.0, 0.0, -1.0);
+	SetupVertexWithNormalGeometry(pVertices, 5, 0.8, 1.5, 0.2, 0.0, 0.0, -1.0);
+
+	// Side 2 - Right face
+	SetupVertexWithNormalGeometry(pVertices, 6, 0.8, 1.0, 0.2, 1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 7, 0.8, 1.5, 0.2, 1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 8, 0.8, 1.0, 0.8, 1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 9, 0.8, 1.0, 0.8, 1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 10, 0.8, 1.5, 0.2, 1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 11, 0.8, 1.5, 0.8, 1.0, 0.0, 0.0);
+
+	// Side 3 - Rear face
+	SetupVertexWithNormalGeometry(pVertices, 12, 0.8, 1.0, 0.8, 0.0, 0.0, 1.0);
+	SetupVertexWithNormalGeometry(pVertices, 13, 0.8, 1.5, 0.8, 0.0, 0.0, 1.0);
+	SetupVertexWithNormalGeometry(pVertices, 14, 0.2, 1.0, 0.8, 0.0, 0.0, 1.0);
+	SetupVertexWithNormalGeometry(pVertices, 15, 0.2, 1.0, 0.8, 0.0, 0.0, 1.0);
+	SetupVertexWithNormalGeometry(pVertices, 16, 0.8, 1.5, 0.8, 0.0, 0.0, 1.0);
+	SetupVertexWithNormalGeometry(pVertices, 17, 0.2, 1.5, 0.8, 0.0, 0.0, 1.0);
+
+	//side 4 - left face
+	SetupVertexWithNormalGeometry(pVertices, 18, 0.2, 1.0, 0.2, -1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 19, 0.2, 1.5, 0.8, -1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 20, 0.2, 1.5, 0.2, -1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 21, 0.2, 1.0, 0.2, -1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 22, 0.2, 1.0, 0.8, -1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 23, 0.2, 1.5, 0.8, -1.0, 0.0, 0.0);
+
+	// Side 5 - Top face
+	SetupVertexWithNormalGeometry(pVertices, 24, 0.2, 1.5, 0.2, 0.0, 1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 25, 0.2, 1.5, 0.8, 0.0, 1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 26, 0.8, 1.5, 0.2, 0.0, 1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 27, 0.8, 1.5, 0.2, 0.0, 1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 28, 0.2, 1.5, 0.8, 0.0, 1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 29, 0.8, 1.5, 0.8, 0.0, 1.0, 0.0);
+
+	// Unlock the Cube vertex buffer
+	pStudBuffer->Unlock();
+
 	//set up all the blocks
 	SetupLegos();
 
@@ -346,12 +404,15 @@ void Render()
 		for (std::shared_ptr<LegoBlock> &b : g_Blocks)
 		{
 			SetupMaterial(b->Colour);
-			g_pd3dDevice->SetTransform(D3DTS_WORLD, &b->TranslateMat);
+			g_pd3dDevice->SetTransform(D3DTS_WORLD, &b->WorldMat);
 			//top
 			if (!b->TopCovered)
 			{
 				g_pd3dDevice->SetStreamSource(0, pTopBuffer, 0, sizeof(CUSTOMVERTEX));
 				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+
+				g_pd3dDevice->SetStreamSource(0, pStudBuffer, 0, sizeof(CUSTOMVERTEX));
+				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 10);
 			}
 			//bottom
 			if (!b->BottomCovered)
@@ -463,7 +524,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 
 	// Create the application's window
 	HWND hWnd = CreateWindow("Basic D3D Example", "Directional Lighting Example",
-		WS_OVERLAPPEDWINDOW, 100, 100, 600, 600,
+		WS_OVERLAPPEDWINDOW, 100, 100, 1000, 1000,
 		GetDesktopWindow(), NULL, wc.hInstance, NULL);
 
 	// Initialize Direct3D
