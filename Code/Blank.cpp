@@ -6,14 +6,9 @@
 //-----------------------------------------------------------------------------
 // Include these files
 #include <Windows.h>	// Windows library (for window functions, menus, dialog boxes, etc)
-#include <d3dx9.h>		// Direct 3D library (for all Direct 3D funtions).
-#include "LegoBlock.h"
 #include <vector>
 #include <memory>
-#include "CUSTOMVERTEX.h"
-#include "Utils.h"
 #include "PatternCreator.h"
-#include "MoveableBlock.h"
 
 //-----------------------------------------------------------------------------
 // Global variables
@@ -109,20 +104,20 @@ void SetupLegos()
 
 	//create the world
 	//outer grass
-	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, Utils::Green);
-	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, Utils::Green);
-	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, Utils::Green);
-	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, Utils::Green);
+	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, Col_DarkGreen);
+	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, Col_DarkGreen);
+	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, Col_DarkGreen);
+	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, Col_DarkGreen);
 
 	//road
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, Utils::Grey);
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, Utils::Grey);
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, Utils::Grey);
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, Utils::Grey);
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, Col_DarkGrey);
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, Col_DarkGrey);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, Col_DarkGrey);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, Col_DarkGrey);
 
 	//center grass and house
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, Utils::Green);
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, Utils::Red);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, Col_DarkGreen);
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, Col_BrightRed);
 
 	////create moving block
 	//std::shared_ptr<LegoBlock> b(new LegoBlock(6, 1, 6, Utils::Red));

@@ -1,10 +1,16 @@
 #pragma once
-#include "CUSTOMVERTEX.h"
 #include <memory>
 #include <vector>
 #include <algorithm>
 #include <d3dx9.h>		// Direct 3D library (for all Direct 3D funtions).
 #include "ColourData.h"
+
+struct CUSTOMVERTEX
+{
+	D3DXVECTOR3 position;	// Position
+	D3DXVECTOR3 normal;		// Vertex normal
+	DWORD colour;       // The vertex color
+};
 
 class LegoBlock
 {
