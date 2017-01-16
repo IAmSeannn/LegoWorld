@@ -1,22 +1,37 @@
 //-----------------------------------------------------------------------------
 // Demonstration of Directional Lighting in Direct3D
 
+#define STRICT
+#define DIRECTINPUT_VERSION 0x0800
+
 #define D3D_DEBUG_INFO
 
 //-----------------------------------------------------------------------------
 // Include these files
 #include <Windows.h>	// Windows library (for window functions, menus, dialog boxes, etc)
+#include <dinput.h>		// Direct Input library (for Direct Input functions)
 #include <vector>
 #include <memory>
 #include "PatternCreator.h"
 #include "FrustumClass.h"
+#include "Timer.h"
+#include <string>
 
 //-----------------------------------------------------------------------------
 // Global variables
+LPDIRECTINPUT8			g_lpDI = NULL; // Pointer to the Direct Input object
+LPDIRECTINPUTDEVICE8	g_pDIKeyboardDevice = NULL; // The Direct Input device - Keyboard.
 
 LPDIRECT3D9             g_pD3D = NULL; // Used to create the D3DDevice
 LPDIRECT3DDEVICE9       g_pd3dDevice = NULL; // The rendering device
 FrustumClass* g_Frustum = new FrustumClass;
+CTimer * g_timer = new CTimer;
+int counter = 5;
+
+//text
+ID3DXFont *pFont;
+RECT fRectangle;
+std::string textMessage;
 
 //basic buffers
 LPDIRECT3DVERTEXBUFFER9 pTopBuffer = NULL; // Buffer to hold vertices of basic block
@@ -34,6 +49,9 @@ D3DXVECTOR3 g_vLookat(10.0f, 5.0f, 10.0f);
 
 // The structure of a vertex in our vertex buffer...
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_NORMAL)
+
+// Function prototypes.
+void WINAPI CleanupDirectInput();
 
 //-----------------------------------------------------------------------------
 // Initialise Direct 3D.
@@ -66,7 +84,7 @@ HRESULT SetupD3D(HWND hWnd)
 	// Enable culling.
 	g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
-	g_pd3dDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
+	//g_pd3dDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
 
 
 	return S_OK;
@@ -85,8 +103,8 @@ void CleanUp()
 	if (pLeftBuffer != NULL)				pLeftBuffer->Release();
 	if (pRightBuffer != NULL)				pRightBuffer->Release();
 	if (pBackBuffer != NULL)				pBackBuffer->Release();
-	if (pStudBuffer != NULL)					pStudBuffer->Release();
-
+	if (pStudBuffer != NULL)				pStudBuffer->Release();
+	if (pFont != NULL)						pFont->Release();
 
 	if (g_pd3dDevice != NULL)				g_pd3dDevice->Release();
 	if (g_pD3D != NULL)						g_pD3D->Release();
@@ -97,6 +115,13 @@ void CleanUp()
 		delete g_Frustum;
 		g_Frustum = 0;
 	}
+	if (g_timer)
+	{
+		delete g_timer;
+		g_timer = 0;
+	}
+
+	CleanupDirectInput();
 }
 
 void SetupLegos()
@@ -115,16 +140,16 @@ void SetupLegos()
 
 	//create the world
 	//outer grass
-	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, Col_DarkGreen);
+	/*PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, Col_DarkGreen);
 	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, Col_DarkGreen);
 	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, Col_DarkGreen);
-	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, Col_DarkGreen);
+	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, Col_DarkGreen);*/
 
 	//road
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, Col_DarkGrey);
+	/*PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, Col_DarkGrey);
 	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, Col_DarkGrey);
 	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, Col_DarkGrey);
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, Col_DarkGrey);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, Col_DarkGrey);*/
 
 	//center grass and house
 	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, Col_DarkGreen);
@@ -396,6 +421,19 @@ void SetupDirectionalLight()
 	g_pd3dDevice->LightEnable(0, TRUE);
 }
 
+void SetupText()
+{
+	pFont = NULL;
+	D3DXCreateFont(g_pd3dDevice, 20, 15, FW_NORMAL, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+		ANTIALIASED_QUALITY, FF_DONTCARE, "Arial", &pFont);
+
+	SetRect(&fRectangle, 0, 0, 500, 300);
+
+	textMessage = "";
+
+	g_timer->Start();
+}
+
 //-----------------------------------------------------------------------------
 // Render the scene.
 void Render()
@@ -463,6 +501,21 @@ void Render()
 				}
 			}
 		}
+		//check fps
+		--counter;
+		g_timer->Update();
+		if (counter <= 0)
+		{
+			counter = 5;
+			textMessage = "FPS: " + std::to_string(g_timer->GetFPS());
+		}
+
+		//render text
+		//draw text
+		if (pFont)
+		{
+			pFont->DrawTextA(NULL, textMessage.c_str(), -1, &fRectangle, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
+		}
 
 		// End the scene.
 		g_pd3dDevice->EndScene();
@@ -470,6 +523,120 @@ void Render()
 
 	// Present the backbuffer to the display.
 	g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
+}
+
+//-----------------------------------------------------------------------------
+// Terminate Direct Input and clean up...
+void WINAPI CleanupDirectInput()
+{
+	if (g_lpDI)
+	{
+		if (g_pDIKeyboardDevice)
+		{
+			// Always unacquire device before calling Release(). 
+			g_pDIKeyboardDevice->Unacquire();
+			g_pDIKeyboardDevice->Release();
+			g_pDIKeyboardDevice = NULL;
+		}
+		g_lpDI->Release();
+		g_lpDI = NULL;
+	}
+}
+
+//------------------------------------------------------------------------------
+// Initialise Direct Input
+BOOL WINAPI SetupDirectInput(HINSTANCE g_hinst, HWND g_hwndMain)
+{
+	HRESULT hr;
+
+	// Create the DirectInput object. 
+	hr = DirectInput8Create(g_hinst, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&g_lpDI, NULL);
+
+	if FAILED(hr) return FALSE;
+
+	// Retrieve a pointer to an IDirectInputDevice8 interface.
+	hr = g_lpDI->CreateDevice(GUID_SysKeyboard, &g_pDIKeyboardDevice, NULL);
+
+	if FAILED(hr)
+	{
+		CleanupDirectInput();
+		return FALSE;
+	}
+
+	// Now that you have an IDirectInputDevice8 interface, get 
+	// ready to use it. 
+
+	// Set the data format using the predefined keyboard data format.
+	hr = g_pDIKeyboardDevice->SetDataFormat(&c_dfDIKeyboard);
+	if FAILED(hr)
+	{
+		CleanupDirectInput(); // Terminate Direct Input initialisation if an error is detected.
+		return FALSE;
+	}
+
+	// Set the cooperative level 
+	hr = g_pDIKeyboardDevice->SetCooperativeLevel(g_hwndMain, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	if FAILED(hr)
+	{
+		CleanupDirectInput();
+		return FALSE;
+	}
+
+	g_pDIKeyboardDevice->Acquire();
+
+	return TRUE;
+}
+
+//------------------------------------------------------------------------------------------
+// Process keyboard inputs...
+void WINAPI ProcessKeyboardInput()
+{
+	// Define a macro to represent the key detection predicate.
+#define KEYDOWN(name, key) (name[key] & 0x80) 
+
+	// Create a buffer (memory space) to contain the key press data from the keyboard.
+	char     buffer[256];
+	HRESULT  hr;
+
+	// Clear the buffer for keyboard data - just in case.
+	ZeroMemory(&buffer, 256);
+
+	hr = g_pDIKeyboardDevice->GetDeviceState(sizeof(buffer), (LPVOID)&buffer);
+	if FAILED(hr)
+	{
+		// If this failed, the device has probably been lost.
+		// Check for (hr == DIERR_INPUTLOST) and attempt to reacquire it here.
+		hr = g_pDIKeyboardDevice->Acquire();
+		while (hr == DIERR_INPUTLOST) hr = g_pDIKeyboardDevice->Acquire();
+
+		hr = g_pDIKeyboardDevice->GetDeviceState(sizeof(buffer), (LPVOID)&buffer);
+	}
+
+	if (KEYDOWN(buffer, DIK_Q))
+	{
+		// 'Q' has been pressed - so tell the application to exit.
+		PostQuitMessage(0);
+	}
+
+	if (KEYDOWN(buffer, DIK_W))
+	{
+	g_vCamera.z += 0.2f;
+	}
+
+	if (KEYDOWN(buffer, DIK_S))
+	{
+	g_vCamera.z -= 0.2f;
+	}
+
+	if (KEYDOWN(buffer, DIK_A))
+	{
+	g_vCamera.x -= 0.2f;
+	}
+
+	if (KEYDOWN(buffer, DIK_D))
+	{
+	g_vCamera.x += 0.2f;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -483,46 +650,6 @@ LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 	}
-
-	// Respond to a keyboard event.
-	case WM_CHAR:
-		switch (wParam)
-		{
-		case 'w':					//move forward
-			g_vCamera.z += 0.2f;
-			return 0;
-			break;
-		case 's':					//move backward
-			g_vCamera.z -= 0.2f;
-			return 0;
-			break;
-		case 'a':					//straft left
-			g_vCamera.x -= 0.2f;
-			return 0;
-			break;
-		case 'd':					//straft right
-			g_vCamera.x += 0.2f;
-			return 0;
-			break;
-		case 'q':					//turn left
-			g_vLookat.x -= 0.2f;
-			return 0;
-			break;
-		case 'e':					//turn right
-			g_vLookat.x += 0.2f;
-			return 0;
-			break;
-		case 'r':					//move up
-			g_vCamera.y += 0.2f;
-			return 0;
-			break;
-		case 'f':					//move down
-			g_vCamera.y -= 0.2f;
-			return 0;
-			break;
-		}
-		break;
-
 	}
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
@@ -551,28 +678,40 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 		// Create the scene geometry
 		if (SUCCEEDED(SetupGeometry()))
 		{
-			// Show the window
-			ShowWindow(hWnd, SW_SHOWDEFAULT);
-
-			// Set up the light.
-			SetupDirectionalLight();
-
-			// Enter the message loop
-			MSG msg;
-			ZeroMemory(&msg, sizeof(msg));
-			while (msg.message != WM_QUIT)
+			// Initialise Direct Input and acquire the keyboard
+			if (SUCCEEDED(SetupDirectInput(hInst, hWnd)))
 			{
-				if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+				// Show the window
+				ShowWindow(hWnd, SW_SHOWDEFAULT);
+				UpdateWindow(hWnd);
+
+				// Set up the light.
+				SetupDirectionalLight();
+
+				//Set up text
+				SetupText();
+
+				// Enter the message loop
+				MSG msg;
+				ZeroMemory(&msg, sizeof(msg));
+				while (msg.message != WM_QUIT)
 				{
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
+					if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+					{
+						TranslateMessage(&msg);
+						DispatchMessage(&msg);
+					}
+					else
+					{
+						ProcessKeyboardInput();
+						Render();
+					}	
 				}
-				else
-					Render();
 			}
 		}
-		CleanUp();
 	}
+
+	CleanUp();
 
 	UnregisterClass("Basic D3D Example", wc.hInstance);
 	return 0;
