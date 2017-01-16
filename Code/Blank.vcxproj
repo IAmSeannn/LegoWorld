@@ -137,12 +137,14 @@
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
     </ClCompile>
+    <ClCompile Include="FrustumClass.cpp" />
     <ClCompile Include="LegoBlock.cpp" />
     <ClCompile Include="MoveableBlock.cpp" />
     <ClCompile Include="PatternCreator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ColourData.h" />
+    <ClInclude Include="FrustumClass.h" />
     <ClInclude Include="LegoBlock.h" />
     <ClInclude Include="MoveableBlock.h" />
     <ClInclude Include="PatternCreator.h" />

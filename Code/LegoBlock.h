@@ -34,8 +34,8 @@ public:
 	D3DXMATRIX WorldMat, TranslateMat, ScaleMat;
 	bool TopCovered, BottomCovered, RightCovered, LeftCovered, FrontCovered, BackCovered;
 	void SetCovereds(std::vector<std::shared_ptr<LegoBlock>>&);
-
-protected:
 	float x, y, z;
+protected:
+	
 };
 

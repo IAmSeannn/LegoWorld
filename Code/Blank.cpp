@@ -9,13 +9,14 @@
 #include <vector>
 #include <memory>
 #include "PatternCreator.h"
+#include "FrustumClass.h"
 
 //-----------------------------------------------------------------------------
 // Global variables
 
 LPDIRECT3D9             g_pD3D = NULL; // Used to create the D3DDevice
 LPDIRECT3DDEVICE9       g_pd3dDevice = NULL; // The rendering device
-
+FrustumClass* g_Frustum = new FrustumClass;
 
 //basic buffers
 LPDIRECT3DVERTEXBUFFER9 pTopBuffer = NULL; // Buffer to hold vertices of basic block
@@ -89,6 +90,13 @@ void CleanUp()
 
 	if (g_pd3dDevice != NULL)				g_pd3dDevice->Release();
 	if (g_pD3D != NULL)						g_pD3D->Release();
+
+	//clean up frustum
+	if (g_Frustum)
+	{
+		delete g_Frustum;
+		g_Frustum = 0;
+	}
 }
 
 void SetupLegos()
@@ -344,6 +352,9 @@ void SetupViewMatrices()
 	D3DXMATRIX matProj;
 	D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI / 4, 1.0f, 1.0f, 200.0f);
 	g_pd3dDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+
+	// Construct Frustum
+	g_Frustum->ConstructFrustum(200.0f, matProj, matView);
 }
 
 //---------------------------------------------------------------------------------
@@ -405,44 +416,51 @@ void Render()
 		{
 			SetupMaterial(b->Colour);
 			g_pd3dDevice->SetTransform(D3DTS_WORLD, &b->WorldMat);
-			//top
-			if (!b->TopCovered)
-			{
-				g_pd3dDevice->SetStreamSource(0, pTopBuffer, 0, sizeof(CUSTOMVERTEX));
-				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 
-				g_pd3dDevice->SetStreamSource(0, pStudBuffer, 0, sizeof(CUSTOMVERTEX));
-				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 10);
-			}
-			//bottom
-			if (!b->BottomCovered)
+			//check if on screen
+
+			if (g_Frustum->CheckSphere(b->x, b->y, b->z, 0.8f))
 			{
-				g_pd3dDevice->SetStreamSource(0, pBottomBuffer, 0, sizeof(CUSTOMVERTEX));
-				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-			}
-			//front
-			if (!b->FrontCovered)
-			{
-				g_pd3dDevice->SetStreamSource(0, pFrontBuffer, 0, sizeof(CUSTOMVERTEX));
-				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-			}
-			//left
-			if (!b->LeftCovered)
-			{
-				g_pd3dDevice->SetStreamSource(0, pLeftBuffer, 0, sizeof(CUSTOMVERTEX));
-				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-			}
-			//right
-			if (!b->RightCovered)
-			{
-				g_pd3dDevice->SetStreamSource(0, pRightBuffer, 0, sizeof(CUSTOMVERTEX));
-				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-			}
-			//back
-			if (!b->BackCovered)
-			{
-				g_pd3dDevice->SetStreamSource(0, pBackBuffer, 0, sizeof(CUSTOMVERTEX));
-				g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+				//CHECK WHICH FACES SHOULD BE DRAWN
+				//top
+				if (!b->TopCovered)
+				{
+					g_pd3dDevice->SetStreamSource(0, pTopBuffer, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+
+					g_pd3dDevice->SetStreamSource(0, pStudBuffer, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 10);
+				}
+				//bottom
+				if (!b->BottomCovered)
+				{
+					g_pd3dDevice->SetStreamSource(0, pBottomBuffer, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+				}
+				//front
+				if (!b->FrontCovered)
+				{
+					g_pd3dDevice->SetStreamSource(0, pFrontBuffer, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+				}
+				//left
+				if (!b->LeftCovered)
+				{
+					g_pd3dDevice->SetStreamSource(0, pLeftBuffer, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+				}
+				//right
+				if (!b->RightCovered)
+				{
+					g_pd3dDevice->SetStreamSource(0, pRightBuffer, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+				}
+				//back
+				if (!b->BackCovered)
+				{
+					g_pd3dDevice->SetStreamSource(0, pBackBuffer, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+				}
 			}
 		}
 
