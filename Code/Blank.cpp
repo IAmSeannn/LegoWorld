@@ -139,18 +139,6 @@ void SetupLegos()
 	D3DXCreateTextureFromFile(g_pd3dDevice, "redBrick.png", &g_pRedBrick);
 	D3DXCreateTextureFromFile(g_pd3dDevice, "greyBrick.png", &g_pGreyBrick);
 
-	/*std::shared_ptr<LegoBlock> a(new LegoBlock(0, 0, 0, Utils::Green));
-	g_Blocks.push_back(a);
-
-	std::shared_ptr<LegoBlock> b(new LegoBlock(1, 0, 0, Utils::Green));
-	g_Blocks.push_back(b);
-
-	std::shared_ptr<LegoBlock> c(new LegoBlock(2, 0, 0, Utils::Green));
-	g_Blocks.push_back(c);
-
-	std::shared_ptr<LegoBlock> d(new LegoBlock(1, 0, 1, Utils::Green));
-	g_Blocks.push_back(d);*/
-
 	//create the world
 	//outer grass
 	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, g_pGreenBrick);
@@ -168,15 +156,20 @@ void SetupLegos()
 	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
 	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
 
-	////create moving block
-	//std::shared_ptr<LegoBlock> b(new LegoBlock(6, 1, 6, Utils::Red));
-	//g_Blocks.push_back(b);
-
-	//for (std::shared_ptr<LegoBlock> &b : g_Blocks)
+	//optimise the blocks
+	g_Blocks.shrink_to_fit();
 	for(int i = 0; i < g_Blocks.size(); ++i)
 	{
 		g_Blocks[i]->SetCovereds(g_Blocks);
 	}
+	for (auto it = g_Blocks.begin(); it != g_Blocks.end(); ++it)
+	{
+		if ((*it)->BackCovered && (*it)->FrontCovered && (*it)->LeftCovered && (*it)->RightCovered && (*it)->TopCovered && (*it)->BottomCovered)
+		{
+			it = g_Blocks.erase(it);
+		}
+	}
+	g_Blocks.shrink_to_fit();
 }
 
 //-----------------------------------------------------------------------------

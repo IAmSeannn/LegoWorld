@@ -1,37 +1,35 @@
 ﻿  Blank.cpp
-c:\users\iamse\documents\github\legoworld\code\blank.cpp(176): warning C4018: '<': signed/unsigned mismatch
-c:\users\iamse\documents\github\legoworld\code\blank.cpp(317): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\iamse\documents\github\legoworld\code\blank.cpp(161): warning C4018: '<': signed/unsigned mismatch
+c:\users\iamse\documents\github\legoworld\code\blank.cpp(310): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\iamse\documents\github\legoworld\code\blank.cpp(311): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\iamse\documents\github\legoworld\code\blank.cpp(312): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\iamse\documents\github\legoworld\code\blank.cpp(313): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\iamse\documents\github\legoworld\code\blank.cpp(314): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\iamse\documents\github\legoworld\code\blank.cpp(315): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(318): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(319): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(320): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(321): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(322): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\iamse\documents\github\legoworld\code\blank.cpp(325): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\iamse\documents\github\legoworld\code\blank.cpp(323): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(326): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(327): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(328): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(329): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(330): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\iamse\documents\github\legoworld\code\blank.cpp(333): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\iamse\documents\github\legoworld\code\blank.cpp(331): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(334): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(335): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(336): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(337): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(338): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\iamse\documents\github\legoworld\code\blank.cpp(341): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\iamse\documents\github\legoworld\code\blank.cpp(339): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(342): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(343): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(344): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(345): warning C4305: 'argument': truncation from 'double' to 'float'
 c:\users\iamse\documents\github\legoworld\code\blank.cpp(346): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\iamse\documents\github\legoworld\code\blank.cpp(349): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\iamse\documents\github\legoworld\code\blank.cpp(350): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\iamse\documents\github\legoworld\code\blank.cpp(351): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\iamse\documents\github\legoworld\code\blank.cpp(352): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\iamse\documents\github\legoworld\code\blank.cpp(353): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\iamse\documents\github\legoworld\code\blank.cpp(354): warning C4305: 'argument': truncation from 'double' to 'float'
-c:\users\iamse\documents\github\legoworld\code\blank.cpp(470): warning C4018: '<': signed/unsigned mismatch
-  LegoBlock.cpp
-c:\users\iamse\documents\github\legoworld\code\legoblock.cpp(9): warning C4018: '<': signed/unsigned mismatch
+c:\users\iamse\documents\github\legoworld\code\blank.cpp(347): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\iamse\documents\github\legoworld\code\blank.cpp(463): warning C4018: '<': signed/unsigned mismatch
   Blank.vcxproj -> C:\Users\iamse\Documents\GitHub\LegoWorld\Code\.\Debug\Blank.exe
   Blank.vcxproj -> .\Debug/Blank.pdb (Full PDB)
