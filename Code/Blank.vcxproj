@@ -144,7 +144,6 @@
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ColourData.h" />
     <ClInclude Include="FrustumClass.h" />
     <ClInclude Include="LegoBlock.h" />
     <ClInclude Include="MoveableBlock.h" />

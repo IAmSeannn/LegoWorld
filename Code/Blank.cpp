@@ -42,13 +42,17 @@ LPDIRECT3DVERTEXBUFFER9 pRightBuffer = NULL; // Buffer to hold vertices of basic
 LPDIRECT3DVERTEXBUFFER9 pBackBuffer = NULL; // Buffer to hold vertices of basic block
 LPDIRECT3DVERTEXBUFFER9 pStudBuffer = NULL; // Buffer to hold vertices of basic block
 
+LPDIRECT3DTEXTURE9		g_pGreenBrick = NULL; // The texture.
+LPDIRECT3DTEXTURE9		g_pRedBrick = NULL; // The texture.
+LPDIRECT3DTEXTURE9		g_pGreyBrick = NULL; // The texture.
+
 
 std::vector<std::shared_ptr<LegoBlock>> g_Blocks;
 D3DXVECTOR3 g_vCamera(25.0f, 25.0f, -20.0f);
 D3DXVECTOR3 g_vLookat(10.0f, 5.0f, 10.0f);
 
 // The structure of a vertex in our vertex buffer...
-#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_NORMAL)
+#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
 
 // Function prototypes.
 void WINAPI CleanupDirectInput();
@@ -106,6 +110,10 @@ void CleanUp()
 	if (pStudBuffer != NULL)				pStudBuffer->Release();
 	if (pFont != NULL)						pFont->Release();
 
+	if (g_pGreenBrick != NULL)				g_pGreenBrick->Release();
+	if (g_pRedBrick != NULL)				g_pRedBrick->Release();
+	if (g_pGreyBrick != NULL)				g_pGreyBrick->Release();
+
 	if (g_pd3dDevice != NULL)				g_pd3dDevice->Release();
 	if (g_pD3D != NULL)						g_pD3D->Release();
 
@@ -126,6 +134,11 @@ void CleanUp()
 
 void SetupLegos()
 {
+	//LOAD TEXTURES
+	D3DXCreateTextureFromFile(g_pd3dDevice, "greenBrick.png", &g_pGreenBrick);
+	D3DXCreateTextureFromFile(g_pd3dDevice, "redBrick.png", &g_pRedBrick);
+	D3DXCreateTextureFromFile(g_pd3dDevice, "greyBrick.png", &g_pGreyBrick);
+
 	/*std::shared_ptr<LegoBlock> a(new LegoBlock(0, 0, 0, Utils::Green));
 	g_Blocks.push_back(a);
 
@@ -140,20 +153,20 @@ void SetupLegos()
 
 	//create the world
 	//outer grass
-	/*PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, Col_DarkGreen);
-	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, Col_DarkGreen);
-	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, Col_DarkGreen);
-	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, Col_DarkGreen);*/
+	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, g_pGreenBrick);
 
 	//road
-	/*PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, Col_DarkGrey);
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, Col_DarkGrey);
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, Col_DarkGrey);
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, Col_DarkGrey);*/
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, g_pGreyBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, g_pGreyBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, g_pGreyBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, g_pGreyBrick);
 
 	//center grass and house
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, Col_DarkGreen);
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, Col_BrightRed);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
 
 	////create moving block
 	//std::shared_ptr<LegoBlock> b(new LegoBlock(6, 1, 6, Utils::Red));
@@ -172,7 +185,7 @@ HRESULT SetupGeometry()
 {
 	void SetupVertexWithNormalGeometry(CUSTOMVERTEX* pV, int index,
 		float px, float py, float pz,
-		float nx, float ny, float nz);
+		float nx, float ny, float nz, float u, float v);
 
 	int BufferSize = 6 * sizeof(CUSTOMVERTEX);
 	CUSTOMVERTEX *pVertices;
@@ -187,12 +200,12 @@ HRESULT SetupGeometry()
 		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
 	}
 	// Side 1 - Front face
-	SetupVertexWithNormalGeometry(pVertices, 0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0);
-	SetupVertexWithNormalGeometry(pVertices, 1, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0);
-	SetupVertexWithNormalGeometry(pVertices, 2, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0);
-	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0);
-	SetupVertexWithNormalGeometry(pVertices, 4, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0);
-	SetupVertexWithNormalGeometry(pVertices, 5, 1.0, 1.0, 0.0, 0.0, 0.0, -1.0);
+	SetupVertexWithNormalGeometry(pVertices, 0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 1, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 2, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 4, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 5, 1.0, 1.0, 0.0, 0.0, 0.0, -1.0, 1.0f, 0.0f);
 	pFrontBuffer->Unlock();
 
 
@@ -206,12 +219,12 @@ HRESULT SetupGeometry()
 		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
 	}
 	// Side 2 - Right face
-	SetupVertexWithNormalGeometry(pVertices, 0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 1, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 2, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 4, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 5, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 1, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 2, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 4, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 5, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0f, 0.0f);
 	pRightBuffer->Unlock();
 
 	// Create the vertex buffer.
@@ -224,12 +237,12 @@ HRESULT SetupGeometry()
 		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
 	}
 	// Side 3 - Rear face
-	SetupVertexWithNormalGeometry(pVertices, 0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0);
-	SetupVertexWithNormalGeometry(pVertices, 1, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0);
-	SetupVertexWithNormalGeometry(pVertices, 2, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0);
-	SetupVertexWithNormalGeometry(pVertices, 3, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0);
-	SetupVertexWithNormalGeometry(pVertices, 4, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0);
-	SetupVertexWithNormalGeometry(pVertices, 5, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0);
+	SetupVertexWithNormalGeometry(pVertices, 0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 1, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 2, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 3, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 4, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 5, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0f, 0.0f);
 	pBackBuffer->Unlock();
 
 	// Create the vertex buffer.
@@ -242,12 +255,12 @@ HRESULT SetupGeometry()
 		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
 	}
 	// Side 4 - Left face
-	SetupVertexWithNormalGeometry(pVertices, 0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 1, 0.0, 1.0, 1.0, -1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 2, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 3, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 4, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 5, 0.0, 1.0, 1.0, -1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 1, 0.0, 1.0, 1.0, -1.0, 0.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 2, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 3, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 4, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 5, 0.0, 1.0, 1.0, -1.0, 0.0, 0.0, 1.0f, 0.0f);
 	pLeftBuffer->Unlock();
 
 	// Create the vertex buffer.
@@ -260,12 +273,12 @@ HRESULT SetupGeometry()
 		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
 	}
 	// Side 5 - Top face
-	SetupVertexWithNormalGeometry(pVertices, 0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 1, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 2, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 4, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 5, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 1, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 2, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 4, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 5, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0f, 0.0f);
 	pTopBuffer->Unlock();
 
 	// Create the vertex buffer.
@@ -278,12 +291,12 @@ HRESULT SetupGeometry()
 		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
 	}
 	// Side 6 - Bottom face
-	SetupVertexWithNormalGeometry(pVertices, 0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 1, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 2, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 4, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 5, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 1, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 2, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 3, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 4, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 5, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 1.0f, 0.0f);
 	// Unlock the Cube vertex buffer
 	pBottomBuffer->Unlock();
 
@@ -300,44 +313,44 @@ HRESULT SetupGeometry()
 
 	//faces
 	// Side 1 - Front face
-	SetupVertexWithNormalGeometry(pVertices, 0, 0.2, 1.0, 0.2, 0.0, 0.0, -1.0);
-	SetupVertexWithNormalGeometry(pVertices, 1, 0.2, 1.2, 0.2, 0.0, 0.0, -1.0);
-	SetupVertexWithNormalGeometry(pVertices, 2, 0.8, 1.0, 0.2, 0.0, 0.0, -1.0);
-	SetupVertexWithNormalGeometry(pVertices, 3, 0.8, 1.0, 0.2, 0.0, 0.0, -1.0);
-	SetupVertexWithNormalGeometry(pVertices, 4, 0.2, 1.2, 0.2, 0.0, 0.0, -1.0);
-	SetupVertexWithNormalGeometry(pVertices, 5, 0.8, 1.2, 0.2, 0.0, 0.0, -1.0);
+	SetupVertexWithNormalGeometry(pVertices, 0, 0.2, 1.0, 0.2, 0.0, 0.0, -1.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 1, 0.2, 1.2, 0.2, 0.0, 0.0, -1.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 2, 0.8, 1.0, 0.2, 0.0, 0.0, -1.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 3, 0.8, 1.0, 0.2, 0.0, 0.0, -1.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 4, 0.2, 1.2, 0.2, 0.0, 0.0, -1.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 5, 0.8, 1.2, 0.2, 0.0, 0.0, -1.0, 1.0f, 0.0f);
 
 	// Side 2 - Right face
-	SetupVertexWithNormalGeometry(pVertices, 6, 0.8, 1.0, 0.2, 1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 7, 0.8, 1.2, 0.2, 1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 8, 0.8, 1.0, 0.8, 1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 9, 0.8, 1.0, 0.8, 1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 10, 0.8, 1.2, 0.2, 1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 11, 0.8, 1.2, 0.8, 1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 6, 0.8, 1.0, 0.2, 1.0, 0.0, 0.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 7, 0.8, 1.2, 0.2, 1.0, 0.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 8, 0.8, 1.0, 0.8, 1.0, 0.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 9, 0.8, 1.0, 0.8, 1.0, 0.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 10, 0.8, 1.2, 0.2, 1.0, 0.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 11, 0.8, 1.2, 0.8, 1.0, 0.0, 0.0, 1.0f, 0.0f);
 
 	// Side 3 - Rear face
-	SetupVertexWithNormalGeometry(pVertices, 12, 0.8, 1.0, 0.8, 0.0, 0.0, 1.0);
-	SetupVertexWithNormalGeometry(pVertices, 13, 0.8, 1.2, 0.8, 0.0, 0.0, 1.0);
-	SetupVertexWithNormalGeometry(pVertices, 14, 0.2, 1.0, 0.8, 0.0, 0.0, 1.0);
-	SetupVertexWithNormalGeometry(pVertices, 15, 0.2, 1.0, 0.8, 0.0, 0.0, 1.0);
-	SetupVertexWithNormalGeometry(pVertices, 16, 0.8, 1.2, 0.8, 0.0, 0.0, 1.0);
-	SetupVertexWithNormalGeometry(pVertices, 17, 0.2, 1.2, 0.8, 0.0, 0.0, 1.0);
+	SetupVertexWithNormalGeometry(pVertices, 12, 0.8, 1.0, 0.8, 0.0, 0.0, 1.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 13, 0.8, 1.2, 0.8, 0.0, 0.0, 1.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 14, 0.2, 1.0, 0.8, 0.0, 0.0, 1.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 15, 0.2, 1.0, 0.8, 0.0, 0.0, 1.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 16, 0.8, 1.2, 0.8, 0.0, 0.0, 1.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 17, 0.2, 1.2, 0.8, 0.0, 0.0, 1.0, 1.0f, 0.0f);
 
 	//side 4 - left face
-	SetupVertexWithNormalGeometry(pVertices, 18, 0.2, 1.0, 0.2, -1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 19, 0.2, 1.2, 0.8, -1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 20, 0.2, 1.2, 0.2, -1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 21, 0.2, 1.0, 0.2, -1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 22, 0.2, 1.0, 0.8, -1.0, 0.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 23, 0.2, 1.2, 0.8, -1.0, 0.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 18, 0.2, 1.0, 0.2, -1.0, 0.0, 0.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 19, 0.2, 1.2, 0.8, -1.0, 0.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 20, 0.2, 1.2, 0.2, -1.0, 0.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 21, 0.2, 1.0, 0.2, -1.0, 0.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 22, 0.2, 1.0, 0.8, -1.0, 0.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 23, 0.2, 1.2, 0.8, -1.0, 0.0, 0.0, 1.0f, 0.0f);
 
 	// Side 5 - Top face
-	SetupVertexWithNormalGeometry(pVertices, 24, 0.2, 1.2, 0.2, 0.0, 1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 25, 0.2, 1.2, 0.8, 0.0, 1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 26, 0.8, 1.2, 0.2, 0.0, 1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 27, 0.8, 1.2, 0.2, 0.0, 1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 28, 0.2, 1.2, 0.8, 0.0, 1.0, 0.0);
-	SetupVertexWithNormalGeometry(pVertices, 29, 0.8, 1.2, 0.8, 0.0, 1.0, 0.0);
+	SetupVertexWithNormalGeometry(pVertices, 24, 0.2, 1.2, 0.2, 0.0, 1.0, 0.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 25, 0.2, 1.2, 0.8, 0.0, 1.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 26, 0.8, 1.2, 0.2, 0.0, 1.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 27, 0.8, 1.2, 0.2, 0.0, 1.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 28, 0.2, 1.2, 0.8, 0.0, 1.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 29, 0.8, 1.2, 0.8, 0.0, 1.0, 0.0, 1.0f, 0.0f);
 
 	// Unlock the Cube vertex buffer
 	pStudBuffer->Unlock();
@@ -351,7 +364,7 @@ HRESULT SetupGeometry()
 // Set up a vertex data.
 void SetupVertexWithNormalGeometry(CUSTOMVERTEX* pV, int index,
 	float px, float py, float pz,
-	float nx, float ny, float nz)
+	float nx, float ny, float nz, float u, float v)
 {
 	pV[index].position.x = px;	// Vertex co-ordinate.
 	pV[index].position.y = py;
@@ -359,6 +372,8 @@ void SetupVertexWithNormalGeometry(CUSTOMVERTEX* pV, int index,
 	pV[index].normal.x = nx;	// Vertex normal.
 	pV[index].normal.y = ny;
 	pV[index].normal.z = nz;
+	pV[index].u = u;			//tex coord
+	pV[index].v = v;
 }
 
 //-----------------------------------------------------------------------------
@@ -384,15 +399,15 @@ void SetupViewMatrices()
 
 //---------------------------------------------------------------------------------
 
-void SetupMaterial(ColourData col)
+void SetupMaterial()
 {
 	// Define a material.
 	// Reflects only diffuse colour.
 	D3DMATERIAL9 Mtl;
 	ZeroMemory(&Mtl, sizeof(D3DMATERIAL9));
-	Mtl.Diffuse.r = col.r;
-	Mtl.Diffuse.g = col.g;
-	Mtl.Diffuse.b = col.b;
+	Mtl.Diffuse.r = 1.0f;
+	Mtl.Diffuse.g = 1.0f;
+	Mtl.Diffuse.b = 1.0f;
 	Mtl.Diffuse.a = 1.0f;
 	g_pd3dDevice->SetMaterial(&Mtl);
 }
@@ -400,21 +415,21 @@ void SetupMaterial(ColourData col)
 //---------------------------------------------------------------------------------
 void SetupDirectionalLight()
 {
-	// Define a directional light.
+	// Define a point light.
 	// Possesses only a diffuse colour.
 	D3DLIGHT9 SampleLight;
 	ZeroMemory(&SampleLight, sizeof(D3DLIGHT9));
 	SampleLight.Type = D3DLIGHT_POINT;
 
-	SampleLight.Diffuse.r = 1.0f;
-	SampleLight.Diffuse.g = 1.0f;
-	SampleLight.Diffuse.b = 1.0f;
+	SampleLight.Diffuse.r = 1.2f;
+	SampleLight.Diffuse.g = 1.2f;
+	SampleLight.Diffuse.b = 1.2f;
 
 	SampleLight.Position = D3DXVECTOR3(50.0f, 50.0f, 50.0f);
 	SampleLight.Attenuation0 = 1.0f;
 	SampleLight.Attenuation1 = 0.0f;
 	SampleLight.Attenuation2 = 0.0f;
-	SampleLight.Range = 300.0f;
+	SampleLight.Range = 5000.0f;
 
 	// Select and enable the light.
 	g_pd3dDevice->SetLight(0, &SampleLight);
@@ -439,7 +454,7 @@ void SetupText()
 void Render()
 {
 	// Clear the backbuffer to a blue colour, also clear the Z buffer at the same time.
-	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(50, 50, 150), 1.0f, 0);
+	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
 	// Begin the scene
 	if (SUCCEEDED(g_pd3dDevice->BeginScene()))
@@ -452,7 +467,11 @@ void Render()
 		// Render all the blocks
 		for (std::shared_ptr<LegoBlock> &b : g_Blocks)
 		{
-			SetupMaterial(b->Colour);
+			g_pd3dDevice->SetTexture(0, b->Texture);
+			g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
+			g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TEXTURE);
+			g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+
 			g_pd3dDevice->SetTransform(D3DTS_WORLD, &b->WorldMat);
 
 			//check if on screen
@@ -685,8 +704,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int)
 				ShowWindow(hWnd, SW_SHOWDEFAULT);
 				UpdateWindow(hWnd);
 
-				// Set up the light.
+				// Set up the light and material.
 				SetupDirectionalLight();
+				SetupMaterial();
 
 				//Set up text
 				SetupText();

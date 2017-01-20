@@ -38,9 +38,6 @@
     <ClInclude Include="LegoBlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ColourData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PatternCreator.h">
       <Filter>Header Files</Filter>
     </ClInclude>

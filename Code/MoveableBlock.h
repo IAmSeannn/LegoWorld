@@ -3,7 +3,7 @@
 class MoveableBlock : public LegoBlock
 {
 public:
-	MoveableBlock(float ix, float iy, float iz, ColourData col) : LegoBlock(ix, iy, iz, col){};
+	MoveableBlock(float ix, float iy, float iz, LPDIRECT3DTEXTURE9 tex) : LegoBlock(ix, iy, iz, tex){};
 	float xOffset = 0.0f;
 	float yOffset = 0.0f;
 	float zOffset = 0.0f;

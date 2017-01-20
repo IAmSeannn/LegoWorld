@@ -3,19 +3,18 @@
 #include <vector>
 #include <algorithm>
 #include <d3dx9.h>		// Direct 3D library (for all Direct 3D funtions).
-#include "ColourData.h"
 
 struct CUSTOMVERTEX
 {
 	D3DXVECTOR3 position;	// Position
 	D3DXVECTOR3 normal;		// Vertex normal
-	DWORD colour;       // The vertex color
+	FLOAT u, v;				// Texture co-ordinates.
 };
 
 class LegoBlock
 {
 public:
-	LegoBlock(float ix, float iy, float iz, ColourData col) : x(ix), y(iy), z(iz), Colour(col) 
+	LegoBlock(float ix, float iy, float iz, LPDIRECT3DTEXTURE9 tex) : x(ix), y(iy), z(iz), Texture(tex)
 	{
 		D3DXMatrixIdentity(&WorldMat);
 		D3DXMatrixTranslation(&TranslateMat, ix, iy*1.2f, iz);
@@ -30,7 +29,7 @@ public:
 		BackCovered = false;
 	};
 	~LegoBlock();
-	ColourData Colour;
+	LPDIRECT3DTEXTURE9 Texture;
 	D3DXMATRIX WorldMat, TranslateMat, ScaleMat;
 	bool TopCovered, BottomCovered, RightCovered, LeftCovered, FrontCovered, BackCovered;
 	void SetCovereds(std::vector<std::shared_ptr<LegoBlock>>&);
