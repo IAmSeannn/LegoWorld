@@ -6,45 +6,36 @@ LegoBlock::~LegoBlock()
 
 void LegoBlock::SetCovereds(std::vector<std::shared_ptr<LegoBlock>>&v)
 {
-	//check for top covered
-	auto top = std::find_if(v.begin(), v.end(), [this](const std::shared_ptr<LegoBlock>& obj) {return (obj->y == this->y + 1) && (obj->x == this->x) && (obj->z == this->z); });
-	if (top != v.end())
+	for (int i = 0; i < v.size(); ++i)
 	{
-		TopCovered = true;
-	}
+		if ((v[i]->y == this->y + 1) && (v[i]->x == this->x) && (v[i]->z == this->z))
+		{
+			TopCovered = true;
+		}
 
-	//check for bottom covered
-	auto bottom = std::find_if(v.begin(), v.end(), [this](const std::shared_ptr<LegoBlock>& obj) {return (obj->y == this->y - 1) && (obj->x == this->x) && (obj->z == this->z); });
-	if (bottom != v.end())
-	{
-		BottomCovered = true;
-	}
+		else if ((v[i]->y == this->y - 1) && (v[i]->x == this->x) && (v[i]->z == this->z))
+		{
+			BottomCovered = true;
+		}
 
-	//check for front covered
-	auto front = std::find_if(v.begin(), v.end(), [this](const std::shared_ptr<LegoBlock>& obj) {return (obj->y == this->y) && (obj->x == this->x) && (obj->z == this->z-1); });
-	if (front != v.end())
-	{
-		FrontCovered = true;
-	}
+		else if ((v[i]->y == this->y) && (v[i]->x == this->x) && (v[i]->z == this->z - 1))
+		{
+			FrontCovered = true;
+		}
 
-	//check for back covered
-	auto back = std::find_if(v.begin(), v.end(), [this](const std::shared_ptr<LegoBlock>& obj) {return (obj->y == this->y) && (obj->x == this->x) && (obj->z == this->z+1); });
-	if (back != v.end())
-	{
-		BackCovered = true;
-	}
+		else if ((v[i]->y == this->y) && (v[i]->x == this->x) && (v[i]->z == this->z + 1))
+		{
+			BackCovered = true;
+		}
 
-	//check for right covered
-	auto right = std::find_if(v.begin(), v.end(), [this](const std::shared_ptr<LegoBlock>& obj) {return (obj->y == this->y) && (obj->x == this->x+1) && (obj->z == this->z); });
-	if (right != v.end())
-	{
-		RightCovered = true;
-	}
+		else if ((v[i]->y == this->y) && (v[i]->x == this->x + 1) && (v[i]->z == this->z))
+		{
+			RightCovered = true;
+		}
 
-	//check for left covered
-	auto left = std::find_if(v.begin(), v.end(), [this](const std::shared_ptr<LegoBlock>& obj) {return (obj->y == this->y) && (obj->x == this->x-1) && (obj->z == this->z); });
-	if (left != v.end())
-	{
-		LeftCovered = true;
+		else if ((v[i]->y == this->y) && (v[i]->x == this->x - 1) && (v[i]->z == this->z))
+		{
+			LeftCovered = true;
+		}
 	}
 }

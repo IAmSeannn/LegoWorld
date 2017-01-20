@@ -172,9 +172,10 @@ void SetupLegos()
 	//std::shared_ptr<LegoBlock> b(new LegoBlock(6, 1, 6, Utils::Red));
 	//g_Blocks.push_back(b);
 
-	for (std::shared_ptr<LegoBlock> &b : g_Blocks)
+	//for (std::shared_ptr<LegoBlock> &b : g_Blocks)
+	for(int i = 0; i < g_Blocks.size(); ++i)
 	{
-		b->SetCovereds(g_Blocks);
+		g_Blocks[i]->SetCovereds(g_Blocks);
 	}
 }
 
@@ -465,22 +466,23 @@ void Render()
 		g_pd3dDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 
 		// Render all the blocks
-		for (std::shared_ptr<LegoBlock> &b : g_Blocks)
+		//for (std::shared_ptr<LegoBlock> &b : g_Blocks)
+		for (int i = 0; i < g_Blocks.size(); ++i)
 		{
-			g_pd3dDevice->SetTexture(0, b->Texture);
+			g_pd3dDevice->SetTexture(0, g_Blocks[i]->Texture);
 			g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
 			g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TEXTURE);
 			g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 
-			g_pd3dDevice->SetTransform(D3DTS_WORLD, &b->WorldMat);
+			g_pd3dDevice->SetTransform(D3DTS_WORLD, &g_Blocks[i]->WorldMat);
 
 			//check if on screen
 
-			if (g_Frustum->CheckSphere(b->x, b->y, b->z, 0.8f))
+			if (g_Frustum->CheckSphere(g_Blocks[i]->x, g_Blocks[i]->y, g_Blocks[i]->z, 0.8f))
 			{
 				//CHECK WHICH FACES SHOULD BE DRAWN
 				//top
-				if (!b->TopCovered)
+				if (!g_Blocks[i]->TopCovered)
 				{
 					g_pd3dDevice->SetStreamSource(0, pTopBuffer, 0, sizeof(CUSTOMVERTEX));
 					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
@@ -489,31 +491,31 @@ void Render()
 					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 10);
 				}
 				//bottom
-				if (!b->BottomCovered)
+				if (!g_Blocks[i]->BottomCovered)
 				{
 					g_pd3dDevice->SetStreamSource(0, pBottomBuffer, 0, sizeof(CUSTOMVERTEX));
 					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 				}
 				//front
-				if (!b->FrontCovered)
+				if (!g_Blocks[i]->FrontCovered)
 				{
 					g_pd3dDevice->SetStreamSource(0, pFrontBuffer, 0, sizeof(CUSTOMVERTEX));
 					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 				}
 				//left
-				if (!b->LeftCovered)
+				if (!g_Blocks[i]->LeftCovered)
 				{
 					g_pd3dDevice->SetStreamSource(0, pLeftBuffer, 0, sizeof(CUSTOMVERTEX));
 					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 				}
 				//right
-				if (!b->RightCovered)
+				if (!g_Blocks[i]->RightCovered)
 				{
 					g_pd3dDevice->SetStreamSource(0, pRightBuffer, 0, sizeof(CUSTOMVERTEX));
 					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 				}
 				//back
-				if (!b->BackCovered)
+				if (!g_Blocks[i]->BackCovered)
 				{
 					g_pd3dDevice->SetStreamSource(0, pBackBuffer, 0, sizeof(CUSTOMVERTEX));
 					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
