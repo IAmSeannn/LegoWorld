@@ -307,44 +307,44 @@ HRESULT SetupGeometry()
 
 	//faces
 	// Side 1 - Front face
-	SetupVertexWithNormalGeometry(pVertices, 0, 0.2, 1.0, 0.2, 0.0, 0.0, -1.0, 0.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 1, 0.2, 1.2, 0.2, 0.0, 0.0, -1.0, 0.0f, 0.0f);
-	SetupVertexWithNormalGeometry(pVertices, 2, 0.8, 1.0, 0.2, 0.0, 0.0, -1.0, 1.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 3, 0.8, 1.0, 0.2, 0.0, 0.0, -1.0, 1.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 4, 0.2, 1.2, 0.2, 0.0, 0.0, -1.0, 0.0f, 0.0f);
-	SetupVertexWithNormalGeometry(pVertices, 5, 0.8, 1.2, 0.2, 0.0, 0.0, -1.0, 1.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 0, 0.2, 1.0, 0.5, 0.0, 0.0, -1.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 1, 0.2, 1.2, 0.5, 0.0, 0.0, -1.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 2, 0.5, 1.0, 0.2, 0.0, 0.0, -1.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 3, 0.5, 1.0, 0.2, 0.0, 0.0, -1.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 4, 0.2, 1.2, 0.5, 0.0, 0.0, -1.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 5, 0.5, 1.2, 0.2, 0.0, 0.0, -1.0, 1.0f, 0.0f);
 
 	// Side 2 - Right face
-	SetupVertexWithNormalGeometry(pVertices, 6, 0.8, 1.0, 0.2, 1.0, 0.0, 0.0, 0.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 7, 0.8, 1.2, 0.2, 1.0, 0.0, 0.0, 0.0f, 0.0f);
-	SetupVertexWithNormalGeometry(pVertices, 8, 0.8, 1.0, 0.8, 1.0, 0.0, 0.0, 1.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 9, 0.8, 1.0, 0.8, 1.0, 0.0, 0.0, 1.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 10, 0.8, 1.2, 0.2, 1.0, 0.0, 0.0, 0.0f, 0.0f);
-	SetupVertexWithNormalGeometry(pVertices, 11, 0.8, 1.2, 0.8, 1.0, 0.0, 0.0, 1.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 6, 0.5, 1.0, 0.2, 1.0, 0.0, 0.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 7, 0.5, 1.2, 0.2, 1.0, 0.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 8, 0.8, 1.0, 0.5, 1.0, 0.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 9, 0.8, 1.0, 0.5, 1.0, 0.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 10, 0.5, 1.2, 0.2, 1.0, 0.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 11, 0.8, 1.2, 0.5, 1.0, 0.0, 0.0, 1.0f, 0.0f);
 
 	// Side 3 - Rear face
-	SetupVertexWithNormalGeometry(pVertices, 12, 0.8, 1.0, 0.8, 0.0, 0.0, 1.0, 0.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 13, 0.8, 1.2, 0.8, 0.0, 0.0, 1.0, 0.0f, 0.0f);
-	SetupVertexWithNormalGeometry(pVertices, 14, 0.2, 1.0, 0.8, 0.0, 0.0, 1.0, 1.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 15, 0.2, 1.0, 0.8, 0.0, 0.0, 1.0, 1.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 16, 0.8, 1.2, 0.8, 0.0, 0.0, 1.0, 0.0f, 0.0f);
-	SetupVertexWithNormalGeometry(pVertices, 17, 0.2, 1.2, 0.8, 0.0, 0.0, 1.0, 1.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 12, 0.8, 1.0, 0.5, 0.0, 0.0, 1.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 13, 0.8, 1.2, 0.5, 0.0, 0.0, 1.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 14, 0.5, 1.0, 0.8, 0.0, 0.0, 1.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 15, 0.5, 1.0, 0.8, 0.0, 0.0, 1.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 16, 0.8, 1.2, 0.5, 0.0, 0.0, 1.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 17, 0.5, 1.2, 0.8, 0.0, 0.0, 1.0, 1.0f, 0.0f);
 
 	//side 4 - left face
-	SetupVertexWithNormalGeometry(pVertices, 18, 0.2, 1.0, 0.2, -1.0, 0.0, 0.0, 0.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 19, 0.2, 1.2, 0.8, -1.0, 0.0, 0.0, 0.0f, 0.0f);
-	SetupVertexWithNormalGeometry(pVertices, 20, 0.2, 1.2, 0.2, -1.0, 0.0, 0.0, 1.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 21, 0.2, 1.0, 0.2, -1.0, 0.0, 0.0, 1.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 22, 0.2, 1.0, 0.8, -1.0, 0.0, 0.0, 0.0f, 0.0f);
-	SetupVertexWithNormalGeometry(pVertices, 23, 0.2, 1.2, 0.8, -1.0, 0.0, 0.0, 1.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 18, 0.2, 1.0, 0.5, -1.0, 0.0, 0.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 19, 0.5, 1.2, 0.8, -1.0, 0.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 20, 0.2, 1.2, 0.5, -1.0, 0.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 21, 0.2, 1.0, 0.5, -1.0, 0.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 22, 0.5, 1.0, 0.8, -1.0, 0.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 23, 0.5, 1.2, 0.8, -1.0, 0.0, 0.0, 1.0f, 0.0f);
 
 	// Side 5 - Top face
-	SetupVertexWithNormalGeometry(pVertices, 24, 0.2, 1.2, 0.2, 0.0, 1.0, 0.0, 0.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 25, 0.2, 1.2, 0.8, 0.0, 1.0, 0.0, 0.0f, 0.0f);
-	SetupVertexWithNormalGeometry(pVertices, 26, 0.8, 1.2, 0.2, 0.0, 1.0, 0.0, 1.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 27, 0.8, 1.2, 0.2, 0.0, 1.0, 0.0, 1.0f, 1.0f);
-	SetupVertexWithNormalGeometry(pVertices, 28, 0.2, 1.2, 0.8, 0.0, 1.0, 0.0, 0.0f, 0.0f);
-	SetupVertexWithNormalGeometry(pVertices, 29, 0.8, 1.2, 0.8, 0.0, 1.0, 0.0, 1.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 24, 0.2, 1.2, 0.5, 0.0, 1.0, 0.0, 0.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 25, 0.5, 1.2, 0.8, 0.0, 1.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 26, 0.5, 1.2, 0.2, 0.0, 1.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 27, 0.5, 1.2, 0.2, 0.0, 1.0, 0.0, 1.0f, 1.0f);
+	SetupVertexWithNormalGeometry(pVertices, 28, 0.5, 1.2, 0.8, 0.0, 1.0, 0.0, 0.0f, 0.0f);
+	SetupVertexWithNormalGeometry(pVertices, 29, 0.8, 1.2, 0.5, 0.0, 1.0, 0.0, 1.0f, 0.0f);
 
 	// Unlock the Cube vertex buffer
 	pStudBuffer->Unlock();
