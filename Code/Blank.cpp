@@ -96,7 +96,7 @@ HRESULT SetupD3D(HWND hWnd)
 	// Enable culling.
 	g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
-	g_pd3dDevice->SetRenderState(D3DRS_LIGHTING, false);
+	//g_pd3dDevice->SetRenderState(D3DRS_LIGHTING, false);
 
 	//g_pd3dDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
 
@@ -154,23 +154,23 @@ void SetupLegos()
 
 	//create the world
 	//outer grass
-	//PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, g_pGreenBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, g_pGreenBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, g_pGreenBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, g_pGreenBrick);
 
-	////road
-	//PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, g_pGreyBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, g_pGreyBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, g_pGreyBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, g_pGreyBrick);
+	//road
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, g_pGreyBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, g_pGreyBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, g_pGreyBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, g_pGreyBrick);
 
-	////center grass and house
-	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
+	//center grass and house
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
 
-	std::shared_ptr<LegoBlock> a(new LegoBlock(10, 10, 10, g_pGreenBrick));
-	g_Blocks.push_back(a);
+	/*std::shared_ptr<LegoBlock> a(new LegoBlock(10, 10, 10, g_pGreenBrick));
+	g_Blocks.push_back(a);*/
 
 	//optimise the blocks
 	g_Blocks.shrink_to_fit();
@@ -611,12 +611,26 @@ void Render()
 					g_pd3dDevice->SetStreamSource(0, pTopBuffer, 0, sizeof(CUSTOMVERTEX));
 					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 
-					//draw sides
-					g_pd3dDevice->SetStreamSource(0, pStudBufferHQSides, 0, sizeof(CUSTOMVERTEX));
-					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, Sides * 2); // using a D3DPT_TRIANGLEFAN primitive
-					//draw top
-					g_pd3dDevice->SetStreamSource(0, pStudBufferHQTop, 0, sizeof(CUSTOMVERTEX));
-					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, Sides); // using a D3DPT_TRIANGLEFAN primitive
+					//check how close brick is
+					D3DXVECTOR3 brickPos(g_Blocks[i]->x, g_Blocks[i]->y, g_Blocks[i]->z);
+					D3DXVECTOR3 * length(new D3DXVECTOR3(g_vCamera - brickPos));
+					if(D3DXVec3Length(length) >= 40)
+					{
+						//draw lq version
+						g_pd3dDevice->SetStreamSource(0, pStudBuffer, 0, sizeof(CUSTOMVERTEX));
+						g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 6 * 2);
+					}
+					else
+					{
+						//draw hq version
+						//draw sides
+						g_pd3dDevice->SetStreamSource(0, pStudBufferHQSides, 0, sizeof(CUSTOMVERTEX));
+						g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, Sides * 2); 
+						g_pd3dDevice->SetStreamSource(0, pStudBufferHQTop, 0, sizeof(CUSTOMVERTEX));
+						g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, Sides); 
+					}
+					delete length;
+					
 				}
 				//bottom
 				if (!g_Blocks[i]->BottomCovered)
