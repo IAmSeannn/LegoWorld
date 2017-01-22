@@ -33,6 +33,10 @@ ID3DXFont *pFont;
 RECT fRectangle;
 std::string textMessage;
 
+//stud quality
+const int Sides = 10;  // The number of sides used to contruct the circle. More sides = smoother circle.
+float Height = 0.2; //height of cylindar
+
 //basic buffers
 LPDIRECT3DVERTEXBUFFER9 pTopBuffer = NULL; // Buffer to hold vertices of basic block
 LPDIRECT3DVERTEXBUFFER9 pBottomBuffer = NULL; // Buffer to hold vertices of basic block
@@ -41,6 +45,10 @@ LPDIRECT3DVERTEXBUFFER9 pLeftBuffer = NULL; // Buffer to hold vertices of basic 
 LPDIRECT3DVERTEXBUFFER9 pRightBuffer = NULL; // Buffer to hold vertices of basic block
 LPDIRECT3DVERTEXBUFFER9 pBackBuffer = NULL; // Buffer to hold vertices of basic block
 LPDIRECT3DVERTEXBUFFER9 pStudBuffer = NULL; // Buffer to hold vertices of basic block
+LPDIRECT3DVERTEXBUFFER9 pStudBufferHQTop = NULL; // Buffer to hold vertices of basic block
+LPDIRECT3DVERTEXBUFFER9 pStudBufferHQSides = NULL; // Buffer to hold vertices of basic block
+
+//D3DXMATRIX StudTransform
 
 LPDIRECT3DTEXTURE9		g_pGreenBrick = NULL; // The texture.
 LPDIRECT3DTEXTURE9		g_pRedBrick = NULL; // The texture.
@@ -88,6 +96,8 @@ HRESULT SetupD3D(HWND hWnd)
 	// Enable culling.
 	g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
+	g_pd3dDevice->SetRenderState(D3DRS_LIGHTING, false);
+
 	//g_pd3dDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
 
 
@@ -108,6 +118,9 @@ void CleanUp()
 	if (pRightBuffer != NULL)				pRightBuffer->Release();
 	if (pBackBuffer != NULL)				pBackBuffer->Release();
 	if (pStudBuffer != NULL)				pStudBuffer->Release();
+	if (pStudBufferHQTop != NULL)				pStudBufferHQTop->Release();
+	if (pStudBufferHQSides != NULL)				pStudBufferHQSides->Release();
+
 	if (pFont != NULL)						pFont->Release();
 
 	if (g_pGreenBrick != NULL)				g_pGreenBrick->Release();
@@ -141,20 +154,23 @@ void SetupLegos()
 
 	//create the world
 	//outer grass
-	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, g_pGreenBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, g_pGreenBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, g_pGreenBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, g_pGreenBrick);
 
-	//road
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, g_pGreyBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, g_pGreyBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, g_pGreyBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, g_pGreyBrick);
+	////road
+	//PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, g_pGreyBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, g_pGreyBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, g_pGreyBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, g_pGreyBrick);
 
-	//center grass and house
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
+	////center grass and house
+	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
+
+	std::shared_ptr<LegoBlock> a(new LegoBlock(10, 10, 10, g_pGreenBrick));
+	g_Blocks.push_back(a);
 
 	//optimise the blocks
 	g_Blocks.shrink_to_fit();
@@ -349,6 +365,121 @@ HRESULT SetupGeometry()
 	// Unlock the Cube vertex buffer
 	pStudBuffer->Unlock();
 
+	//////////////////////////////
+	//DRAW CYLINDRICAL BUFFER
+	/////////////////////////////
+
+	// Calculate the number of vertices required, and the size of the buffer to hold them.
+	BufferSize = (Sides + 2) * sizeof(CUSTOMVERTEX);
+
+	// Now get Direct3D to create the vertex buffer.
+	// The vertex buffer for the rectangle doesn't exist at this point, but the pointer to
+	// it does (g_pVertexBuffer)
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pStudBufferHQTop, NULL)))
+	{
+		return E_FAIL; // if the vertex buffer culd not be created.
+	}
+
+	// Fill the buffer with appropriate vertices to describe the circle.
+
+	// Create a pointer to the first vertex in the buffer
+	// Also lock it, so nothing else can touch it while the values are being inserted.
+	if (FAILED(pStudBufferHQTop->Lock(0, 0, (void**)&pVertices, 0)))
+	{
+		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
+	}
+
+	// Fill the vertex buffers with data...
+	// Must do this in reverse order so the points are specified are clockwise.
+
+	float Angle = (2 * D3DX_PI);
+	Angle = Angle / (float)Sides;
+	float Radius = 0.3f;
+	DWORD CircleColour = 0x00ff9000; // Orange.
+
+	SetupVertexWithNormalGeometry(pVertices, 0, 0.5f, 1.0f + Height, 0.5f, 0, 1.0, 0, 0, 0);
+	//pVertices[0].x = 0;
+	//pVertices[0].y = 0;
+	//pVertices[0].z = 0;
+	//pVertices[0].colour = CircleColour;
+
+	struct c_Coord
+	{
+		float x, z, a;
+	};
+
+	c_Coord cirCoord[Sides];
+
+	// Initialise the vertices of the circle.
+	for (int i = 1; i < (Sides + 2); ++i)
+	{
+		float a = Angle*(Sides - i);
+
+		float x = Radius * (cos(a));
+		float z = Radius * (sin(a));
+
+		SetupVertexWithNormalGeometry(pVertices, i, 0.5f+x, 1.0f + Height, 0.5f+z, 0, 1.0, 0, 0, 0);
+
+		if (i < Sides+1)
+		{
+			cirCoord[i - 1].x = x;
+			cirCoord[i - 1].z = z;
+			cirCoord[i - 1].a = a;
+		}
+	}
+
+	// Unlock the vertex buffer...
+	pStudBufferHQTop->Unlock();
+
+	//now add the square bits
+
+	BufferSize = (Sides * 6) * sizeof(CUSTOMVERTEX);
+
+	// Now get Direct3D to create the vertex buffer.
+	// The vertex buffer for the rectangle doesn't exist at this point, but the pointer to
+	// it does (g_pVertexBuffer)
+	if (FAILED(g_pd3dDevice->CreateVertexBuffer(BufferSize, 0, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &pStudBufferHQSides, NULL)))
+	{
+		return E_FAIL; // if the vertex buffer culd not be created.
+	}
+
+	// Fill the buffer with appropriate vertices to describe the circle.
+
+	// Create a pointer to the first vertex in the buffer
+	// Also lock it, so nothing else can touch it while the values are being inserted.
+	if (FAILED(pStudBufferHQSides->Lock(0, 0, (void**)&pVertices, 0)))
+	{
+		return E_FAIL;  // if the pointer to the vertex buffer could not be established.
+	}
+
+	int count = 0;
+	for (int i = 0; i < Sides; ++i)
+	{
+		int pos;
+		int pos2;
+		if (i + 1 >= Sides)
+		{
+			pos2 = 0;
+			pos = i;
+		}
+		else
+		{
+			pos = i;
+			pos2 = i + 1;
+		}
+
+		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos2].x, 1.0f+Height, 0.5f + cirCoord[pos2].z, cos(cirCoord[pos2].a), 0, sin(cirCoord[pos2].a), 0, 0);
+		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos].x, 1.0f, 0.5f + cirCoord[pos].z, cos(cirCoord[pos].a), 0, sin(cirCoord[pos].a), 0, 0);
+		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos2].x, 1.0f, 0.5f + cirCoord[pos2].z, cos(cirCoord[pos2].a), 0, sin(cirCoord[pos2].a), 0, 0);
+
+		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos2].x,1.0f+ Height, 0.5f + cirCoord[pos2].z, cos(cirCoord[pos2].a), 0, sin(cirCoord[pos2].a), 0, 0);
+		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos].x, 1.0f + Height, 0.5f + cirCoord[pos].z, cos(cirCoord[pos].a), 0, sin(cirCoord[pos].a), 0, 0);
+		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos].x, 1.0f, 0.5f + cirCoord[pos].z, cos(cirCoord[pos].a), 0, sin(cirCoord[pos].a), 0, 0);
+
+	}
+
+	pStudBufferHQSides->Unlock();
+
 	//set up all the blocks
 	SetupLegos();
 
@@ -448,7 +579,7 @@ void SetupText()
 void Render()
 {
 	// Clear the backbuffer to a blue colour, also clear the Z buffer at the same time.
-	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+	g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(124, 124, 124), 1.0f, 0);
 
 	// Begin the scene
 	if (SUCCEEDED(g_pd3dDevice->BeginScene()))
@@ -480,8 +611,12 @@ void Render()
 					g_pd3dDevice->SetStreamSource(0, pTopBuffer, 0, sizeof(CUSTOMVERTEX));
 					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
 
-					g_pd3dDevice->SetStreamSource(0, pStudBuffer, 0, sizeof(CUSTOMVERTEX));
-					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 10);
+					//draw sides
+					g_pd3dDevice->SetStreamSource(0, pStudBufferHQSides, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, Sides * 2); // using a D3DPT_TRIANGLEFAN primitive
+					//draw top
+					g_pd3dDevice->SetStreamSource(0, pStudBufferHQTop, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, Sides); // using a D3DPT_TRIANGLEFAN primitive
 				}
 				//bottom
 				if (!g_Blocks[i]->BottomCovered)
