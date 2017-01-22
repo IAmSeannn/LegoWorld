@@ -11,7 +11,7 @@ class LegoBlock;
 //stud quality
 extern const int Sides; // The number of sides used to contruct the circle. More sides = smoother circle.
 extern float Height; //height of cylindar
-extern bool BlockLocations[5][2][5];
+extern bool BlockLocations[50][10][50];
 
 //basic buffers
 extern LPDIRECT3DVERTEXBUFFER9 pTopBuffer; // Buffer to hold vertices of basic block
@@ -76,12 +76,12 @@ public:
 		D3DXMatrixMultiply(&PostWorldMat, &PostWorldMat, &PostScaleMat);		// First Scale
 		D3DXMatrixMultiply(&PostWorldMat, &PostWorldMat, &TranslateMat);	// And finally Translate
 
-		TopCovered = false;
-		BottomCovered = false;
-		RightCovered = false;
-		LeftCovered = false;
-		FrontCovered = false;
-		BackCovered = false;
+		TopCovered = true;
+		BottomCovered = true;
+		RightCovered = true;
+		LeftCovered = true;
+		FrontCovered = true;
+		BackCovered = true;
 	};
 	~LegoBlock();
 	LPDIRECT3DTEXTURE9 Texture;

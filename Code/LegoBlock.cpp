@@ -7,7 +7,7 @@ LegoBlock::~LegoBlock()
 //stud quality
 float Height = 0.2; //height of cylindar
 const int Sides = 10;
-bool BlockLocations[5][2][5] = {{{false}}};
+bool BlockLocations[50][10][50] = {{{false}}};
 
 					//basic buffers
 LPDIRECT3DVERTEXBUFFER9 pTopBuffer = NULL; // Buffer to hold vertices of basic block
@@ -30,41 +30,48 @@ D3DXVECTOR3 g_vCamera(25.0f, 25.0f, -20.0f);
 LPDIRECT3DDEVICE9       g_pd3dDevice = NULL; // The rendering device
 FrustumClass* g_Frustum = new FrustumClass;
 
-
-
-
 void LegoBlock::SetCovereds(std::vector<std::shared_ptr<LegoBlock>>&v)
 {
-	for (int i = 0; i < v.size(); ++i)
+	for (int i = 0; i < xNum; ++i)
 	{
-		if ((v[i]->y == this->y + 1) && (v[i]->x == this->x) && (v[i]->z == this->z))
+		for (int j = 0; j < zNum; ++j)
 		{
-			TopCovered = true;
-		}
+			//check left
+			if (!BlockLocations[(int)x-1][(int)y][(int)z + j])
+			{
+				LeftCovered = false;
+			}
 
-		else if ((v[i]->y == this->y - 1) && (v[i]->x == this->x) && (v[i]->z == this->z))
-		{
-			BottomCovered = true;
-		}
+			//check right
+			if (!BlockLocations[(int)x + xNum][(int)y][(int)z + j])
+			{
+				RightCovered = false;
+			}
 
-		else if ((v[i]->y == this->y) && (v[i]->x == this->x) && (v[i]->z == this->z - 1))
-		{
-			FrontCovered = true;
-		}
+			//check top
+			if (!BlockLocations[(int)x + i][(int)y+1][(int)z + j])
+			{
+				TopCovered = false;
+			}
 
-		else if ((v[i]->y == this->y) && (v[i]->x == this->x) && (v[i]->z == this->z + 1))
-		{
-			BackCovered = true;
-		}
+			//checl bottom
+			if (!BlockLocations[(int)x + i][(int)y - 1][(int)z + j])
+			{
+				BottomCovered = false;
+			}
 
-		else if ((v[i]->y == this->y) && (v[i]->x == this->x + 1) && (v[i]->z == this->z))
-		{
-			RightCovered = true;
-		}
+			//check front
+			if (!BlockLocations[(int)x + i][(int)y][(int)z - 1])
+			{
+				FrontCovered = false;
+			}
 
-		else if ((v[i]->y == this->y) && (v[i]->x == this->x - 1) && (v[i]->z == this->z))
-		{
-			LeftCovered = true;
+			//check back
+			if (!BlockLocations[(int)x + i][(int)y][(int)z +zNum])
+			{
+				BackCovered = false;
+			}
+			
 		}
 	}
 }

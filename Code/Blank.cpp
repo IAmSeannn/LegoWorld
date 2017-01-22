@@ -12,7 +12,7 @@
 #include <dinput.h>		// Direct Input library (for Direct Input functions)
 #include <vector>
 #include <memory>
-//#include "PatternCreator.h"
+#include "PatternCreator.h"
 #include "LegoBlock.h"
 #include "Timer.h"
 #include <string>
@@ -129,26 +129,26 @@ void SetupLegos()
 
 	//create the world
 	////outer grass
-	//PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, g_pGreenBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, g_pGreenBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, g_pGreenBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, g_pGreenBrick);
 
-	////road
-	//PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, g_pGreyBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, g_pGreyBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, g_pGreyBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, g_pGreyBrick);
+	//road
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, g_pGreyBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, g_pGreyBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, g_pGreyBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, g_pGreyBrick);
 
-	////center grass and house
-	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
-	//PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
+	//center grass and house
+	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
+	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
 
-	std::shared_ptr<LegoBlock> a(new LegoBlock(1, 4, 0, 0, 0, g_pGreenBrick));
+	/*std::shared_ptr<LegoBlock> a(new LegoBlock(1, 4, 0, 0, 0, g_pGreenBrick));
 	g_Blocks.push_back(a);
 
-	std::shared_ptr<LegoBlock> b(new LegoBlock(2, 2, 3, 0, 0, g_pGreenBrick));
-	g_Blocks.push_back(b);
+	std::shared_ptr<LegoBlock> b(new LegoBlock(2, 2, 1, 0, 0, g_pGreenBrick));
+	g_Blocks.push_back(b);*/
 
 
 
