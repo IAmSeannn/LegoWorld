@@ -1,22 +1,8 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: frustumclass.cpp
-////////////////////////////////////////////////////////////////////////////////
 #include "frustumclass.h"
 
-
-FrustumClass::FrustumClass()
-{
-}
-
-
-FrustumClass::FrustumClass(const FrustumClass& other)
-{
-}
-
-
-FrustumClass::~FrustumClass()
-{
-}
+FrustumClass::FrustumClass(){}
+FrustumClass::FrustumClass(const FrustumClass& other){}
+FrustumClass::~FrustumClass(){}
 
 void FrustumClass::ConstructFrustum(float screenDepth, D3DXMATRIX projectionMatrix, D3DXMATRIX viewMatrix)
 {
@@ -76,23 +62,6 @@ void FrustumClass::ConstructFrustum(float screenDepth, D3DXMATRIX projectionMatr
 	D3DXPlaneNormalize(&m_planes[5], &m_planes[5]);
 
 	return;
-}
-
-bool FrustumClass::CheckPoint(float x, float y, float z)
-{
-	int i;
-
-
-	// Check if the point is inside all six planes of the view frustum.
-	for (i = 0; i<6; i++)
-	{
-		if (D3DXPlaneDotCoord(&m_planes[i], &D3DXVECTOR3(x, y, z)) < 0.0f)
-		{
-			return false;
-		}
-	}
-
-	return true;
 }
 
 bool FrustumClass::CheckSphere(float xCenter, float yCenter, float zCenter, float radius)
