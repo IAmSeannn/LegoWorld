@@ -418,7 +418,7 @@ HRESULT SetupGeometry()
 		float x = Radius * (cos(a));
 		float z = Radius * (sin(a));
 
-		SetupVertexWithNormalGeometry(pVertices, i, 0.5f+x, 1.0f + Height, 0.5f+z, 0, 1.0, 0, 0, 0);
+		SetupVertexWithNormalGeometry(pVertices, i, 0.5f+x, 1.0f + Height, 0.5f+z, 0, 1.0, 0, x+ 0.4f, z+ 0.4f);
 
 		if (i < Sides+1)
 		{
@@ -469,12 +469,12 @@ HRESULT SetupGeometry()
 		}
 
 		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos2].x, 1.0f+Height, 0.5f + cirCoord[pos2].z, cos(cirCoord[pos2].a), 0, sin(cirCoord[pos2].a), 0, 0);
-		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos].x, 1.0f, 0.5f + cirCoord[pos].z, cos(cirCoord[pos].a), 0, sin(cirCoord[pos].a), 0, 0);
-		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos2].x, 1.0f, 0.5f + cirCoord[pos2].z, cos(cirCoord[pos2].a), 0, sin(cirCoord[pos2].a), 0, 0);
+		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos].x, 1.0f, 0.5f + cirCoord[pos].z, cos(cirCoord[pos].a), 0, sin(cirCoord[pos].a),1, 1);
+		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos2].x, 1.0f, 0.5f + cirCoord[pos2].z, cos(cirCoord[pos2].a), 0, sin(cirCoord[pos2].a), 0, 1);
 
 		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos2].x,1.0f+ Height, 0.5f + cirCoord[pos2].z, cos(cirCoord[pos2].a), 0, sin(cirCoord[pos2].a), 0, 0);
-		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos].x, 1.0f + Height, 0.5f + cirCoord[pos].z, cos(cirCoord[pos].a), 0, sin(cirCoord[pos].a), 0, 0);
-		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos].x, 1.0f, 0.5f + cirCoord[pos].z, cos(cirCoord[pos].a), 0, sin(cirCoord[pos].a), 0, 0);
+		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos].x, 1.0f + Height, 0.5f + cirCoord[pos].z, cos(cirCoord[pos].a), 0, sin(cirCoord[pos].a), 1, 0);
+		SetupVertexWithNormalGeometry(pVertices, count++, 0.5f + cirCoord[pos].x, 1.0f, 0.5f + cirCoord[pos].z, cos(cirCoord[pos].a), 0, sin(cirCoord[pos].a), 1, 1);
 
 	}
 
