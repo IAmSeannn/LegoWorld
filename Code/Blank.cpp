@@ -12,8 +12,8 @@
 #include <dinput.h>		// Direct Input library (for Direct Input functions)
 #include <vector>
 #include <memory>
-#include "PatternCreator.h"
-#include "FrustumClass.h"
+//#include "PatternCreator.h"
+#include "LegoBlock.h"
 #include "Timer.h"
 #include <string>
 
@@ -23,8 +23,7 @@ LPDIRECTINPUT8			g_lpDI = NULL; // Pointer to the Direct Input object
 LPDIRECTINPUTDEVICE8	g_pDIKeyboardDevice = NULL; // The Direct Input device - Keyboard.
 
 LPDIRECT3D9             g_pD3D = NULL; // Used to create the D3DDevice
-LPDIRECT3DDEVICE9       g_pd3dDevice = NULL; // The rendering device
-FrustumClass* g_Frustum = new FrustumClass;
+
 CTimer * g_timer = new CTimer;
 int counter = 5;
 
@@ -33,30 +32,6 @@ ID3DXFont *pFont;
 RECT fRectangle;
 std::string textMessage;
 
-//stud quality
-const int Sides = 10;  // The number of sides used to contruct the circle. More sides = smoother circle.
-float Height = 0.2; //height of cylindar
-
-//basic buffers
-LPDIRECT3DVERTEXBUFFER9 pTopBuffer = NULL; // Buffer to hold vertices of basic block
-LPDIRECT3DVERTEXBUFFER9 pBottomBuffer = NULL; // Buffer to hold vertices of basic block
-LPDIRECT3DVERTEXBUFFER9 pFrontBuffer = NULL; // Buffer to hold vertices of basic block
-LPDIRECT3DVERTEXBUFFER9 pLeftBuffer = NULL; // Buffer to hold vertices of basic block
-LPDIRECT3DVERTEXBUFFER9 pRightBuffer = NULL; // Buffer to hold vertices of basic block
-LPDIRECT3DVERTEXBUFFER9 pBackBuffer = NULL; // Buffer to hold vertices of basic block
-LPDIRECT3DVERTEXBUFFER9 pStudBuffer = NULL; // Buffer to hold vertices of basic block
-LPDIRECT3DVERTEXBUFFER9 pStudBufferHQTop = NULL; // Buffer to hold vertices of basic block
-LPDIRECT3DVERTEXBUFFER9 pStudBufferHQSides = NULL; // Buffer to hold vertices of basic block
-
-//D3DXMATRIX StudTransform
-
-LPDIRECT3DTEXTURE9		g_pGreenBrick = NULL; // The texture.
-LPDIRECT3DTEXTURE9		g_pRedBrick = NULL; // The texture.
-LPDIRECT3DTEXTURE9		g_pGreyBrick = NULL; // The texture.
-
-
-std::vector<std::shared_ptr<LegoBlock>> g_Blocks;
-D3DXVECTOR3 g_vCamera(25.0f, 25.0f, -20.0f);
 D3DXVECTOR3 g_vLookat(10.0f, 5.0f, 10.0f);
 
 // The structure of a vertex in our vertex buffer...
@@ -153,24 +128,29 @@ void SetupLegos()
 	D3DXCreateTextureFromFile(g_pd3dDevice, "greyBrick.png", &g_pGreyBrick);
 
 	//create the world
-	//outer grass
-	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, g_pGreenBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, g_pGreenBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, g_pGreenBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, g_pGreenBrick);
+	////outer grass
+	//PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, g_pGreenBrick);
 
-	//road
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, g_pGreyBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, g_pGreyBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, g_pGreyBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, g_pGreyBrick);
+	////road
+	//PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, g_pGreyBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, g_pGreyBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, g_pGreyBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, g_pGreyBrick);
 
-	//center grass and house
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
+	////center grass and house
+	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
 
-	/*std::shared_ptr<LegoBlock> a(new LegoBlock(10, 10, 10, g_pGreenBrick));
-	g_Blocks.push_back(a);*/
+	std::shared_ptr<LegoBlock> a(new LegoBlock(1, 4, 10, 10, 10, g_pGreenBrick));
+	g_Blocks.push_back(a);
+
+	std::shared_ptr<LegoBlock> b(new LegoBlock(2, 2, 5, 10, 10, g_pGreenBrick));
+	g_Blocks.push_back(b);
+
+
 
 	//optimise the blocks
 	g_Blocks.shrink_to_fit();
@@ -408,7 +388,7 @@ HRESULT SetupGeometry()
 		float x, z, a;
 	};
 
-	c_Coord cirCoord[Sides];
+	c_Coord cirCoord[10];
 
 	// Initialise the vertices of the circle.
 	for (int i = 1; i < (Sides + 2); ++i)
@@ -593,76 +573,7 @@ void Render()
 		//for (std::shared_ptr<LegoBlock> &b : g_Blocks)
 		for (int i = 0; i < g_Blocks.size(); ++i)
 		{
-			g_pd3dDevice->SetTexture(0, g_Blocks[i]->Texture);
-			g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
-			g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TEXTURE);
-			g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-
-			g_pd3dDevice->SetTransform(D3DTS_WORLD, &g_Blocks[i]->WorldMat);
-
-			//check if on screen
-
-			if (g_Frustum->CheckSphere(g_Blocks[i]->x, g_Blocks[i]->y, g_Blocks[i]->z, 0.8f))
-			{
-				//CHECK WHICH FACES SHOULD BE DRAWN
-				//top
-				if (!g_Blocks[i]->TopCovered)
-				{
-					g_pd3dDevice->SetStreamSource(0, pTopBuffer, 0, sizeof(CUSTOMVERTEX));
-					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-
-					//check how close brick is
-					D3DXVECTOR3 brickPos(g_Blocks[i]->x, g_Blocks[i]->y, g_Blocks[i]->z);
-					D3DXVECTOR3 * length(new D3DXVECTOR3(g_vCamera - brickPos));
-					if(D3DXVec3Length(length) >= 40)
-					{
-						//draw lq version
-						g_pd3dDevice->SetStreamSource(0, pStudBuffer, 0, sizeof(CUSTOMVERTEX));
-						g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 6 * 2);
-					}
-					else
-					{
-						//draw hq version
-						//draw sides
-						g_pd3dDevice->SetStreamSource(0, pStudBufferHQSides, 0, sizeof(CUSTOMVERTEX));
-						g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, Sides * 2); 
-						g_pd3dDevice->SetStreamSource(0, pStudBufferHQTop, 0, sizeof(CUSTOMVERTEX));
-						g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, Sides); 
-					}
-					delete length;
-					
-				}
-				//bottom
-				if (!g_Blocks[i]->BottomCovered)
-				{
-					g_pd3dDevice->SetStreamSource(0, pBottomBuffer, 0, sizeof(CUSTOMVERTEX));
-					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-				}
-				//front
-				if (!g_Blocks[i]->FrontCovered)
-				{
-					g_pd3dDevice->SetStreamSource(0, pFrontBuffer, 0, sizeof(CUSTOMVERTEX));
-					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-				}
-				//left
-				if (!g_Blocks[i]->LeftCovered)
-				{
-					g_pd3dDevice->SetStreamSource(0, pLeftBuffer, 0, sizeof(CUSTOMVERTEX));
-					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-				}
-				//right
-				if (!g_Blocks[i]->RightCovered)
-				{
-					g_pd3dDevice->SetStreamSource(0, pRightBuffer, 0, sizeof(CUSTOMVERTEX));
-					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-				}
-				//back
-				if (!g_Blocks[i]->BackCovered)
-				{
-					g_pd3dDevice->SetStreamSource(0, pBackBuffer, 0, sizeof(CUSTOMVERTEX));
-					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-				}
-			}
+			g_Blocks[i]->render();
 		}
 		//check fps
 		--counter;

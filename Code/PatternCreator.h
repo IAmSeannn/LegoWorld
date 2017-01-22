@@ -1,5 +1,5 @@
 #pragma once
-#include "MoveableBlock.h"
+#include "LegoBlock.h"
 #include <vector>
 class PatternCreator
 {

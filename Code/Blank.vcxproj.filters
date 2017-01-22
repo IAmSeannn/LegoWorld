@@ -24,9 +24,6 @@
     <ClCompile Include="PatternCreator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MoveableBlock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FrustumClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,9 +36,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PatternCreator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveableBlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FrustumClass.h">

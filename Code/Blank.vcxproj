@@ -139,14 +139,12 @@
     </ClCompile>
     <ClCompile Include="FrustumClass.cpp" />
     <ClCompile Include="LegoBlock.cpp" />
-    <ClCompile Include="MoveableBlock.cpp" />
     <ClCompile Include="PatternCreator.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FrustumClass.h" />
     <ClInclude Include="LegoBlock.h" />
-    <ClInclude Include="MoveableBlock.h" />
     <ClInclude Include="PatternCreator.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>

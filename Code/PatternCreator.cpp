@@ -20,8 +20,8 @@ PatternCreator::~PatternCreator()
 		{
 			for (int sZ = 0; sZ < sizeZ; sZ++)
 			{
-				std::shared_ptr<LegoBlock> b(new LegoBlock(posX + sX, posY + sY, posZ + sZ, tex));
-				blocks.push_back(b);
+//				std::shared_ptr<LegoBlock> b(new LegoBlock(posX + sX, posY + sY, posZ + sZ, tex));
+			//	blocks.push_back(b);
 			}
 		}
 	}
