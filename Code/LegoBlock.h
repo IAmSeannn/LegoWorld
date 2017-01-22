@@ -11,6 +11,7 @@ class LegoBlock;
 //stud quality
 extern const int Sides; // The number of sides used to contruct the circle. More sides = smoother circle.
 extern float Height; //height of cylindar
+extern bool BlockLocations[5][2][5];
 
 //basic buffers
 extern LPDIRECT3DVERTEXBUFFER9 pTopBuffer; // Buffer to hold vertices of basic block
@@ -33,8 +34,6 @@ extern D3DXVECTOR3 g_vCamera;
 extern LPDIRECT3DDEVICE9       g_pd3dDevice; // The rendering device
 extern FrustumClass* g_Frustum;;
 
-
-
 struct CUSTOMVERTEX
 {
 	D3DXVECTOR3 position;	// Position
@@ -47,6 +46,15 @@ class LegoBlock
 public:
 	LegoBlock(int sizeX, int sizeZ, float posX, float posY, float posZ, LPDIRECT3DTEXTURE9 tex) : x(posX), y(posY), z(posZ), Texture(tex), xNum(sizeX), zNum(sizeZ)
 	{
+		//set BlockLocations to true in correct location
+		for (int i = 0; i < sizeX; ++i)
+		{
+			for (int j = 0; j < sizeZ; ++j)
+			{
+				BlockLocations[(int)x + i][(int)y][(int)z+j] = true;
+			}
+		}
+
 		for (int i = 0; i < sizeX; ++i)
 		{
 			for (int j = 0; j < sizeZ; ++j)

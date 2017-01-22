@@ -144,10 +144,10 @@ void SetupLegos()
 	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
 	//PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
 
-	std::shared_ptr<LegoBlock> a(new LegoBlock(1, 4, 10, 10, 10, g_pGreenBrick));
+	std::shared_ptr<LegoBlock> a(new LegoBlock(1, 4, 0, 0, 0, g_pGreenBrick));
 	g_Blocks.push_back(a);
 
-	std::shared_ptr<LegoBlock> b(new LegoBlock(2, 2, 5, 10, 10, g_pGreenBrick));
+	std::shared_ptr<LegoBlock> b(new LegoBlock(2, 2, 3, 0, 0, g_pGreenBrick));
 	g_Blocks.push_back(b);
 
 

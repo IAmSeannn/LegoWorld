@@ -7,6 +7,7 @@ LegoBlock::~LegoBlock()
 //stud quality
 float Height = 0.2; //height of cylindar
 const int Sides = 10;
+bool BlockLocations[5][2][5] = {{{false}}};
 
 					//basic buffers
 LPDIRECT3DVERTEXBUFFER9 pTopBuffer = NULL; // Buffer to hold vertices of basic block
