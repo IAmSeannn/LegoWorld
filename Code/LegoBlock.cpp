@@ -30,6 +30,9 @@ LPDIRECT3DTEXTURE9		g_pRedBrick = NULL; // The texture.
 LPDIRECT3DTEXTURE9		g_pGreyBrick = NULL; // The texture.
 LPDIRECT3DTEXTURE9		g_pBlueBrick = NULL; // The texture.
 LPDIRECT3DTEXTURE9		g_pHouseRedBrick = NULL; // The texture.
+LPDIRECT3DTEXTURE9		g_pBoatBrick = NULL; // The texture.
+LPDIRECT3DTEXTURE9		g_pGrassBrick = NULL; // The texture.
+
 
 std::vector<std::shared_ptr<LegoBlock>> g_Blocks;
 D3DXVECTOR3 g_vCamera(25.0f, 40.0f, -20.0f);

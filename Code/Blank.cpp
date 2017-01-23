@@ -110,6 +110,8 @@ void CleanUp()
 	if (g_pGreyBrick != NULL)				g_pGreyBrick->Release();
 	if (g_pBlueBrick != NULL)				g_pBlueBrick->Release();
 	if (g_pHouseRedBrick != NULL)			g_pHouseRedBrick->Release();
+	if (g_pBoatBrick != NULL)				g_pBoatBrick->Release();
+	if (g_pGrassBrick != NULL)				g_pGrassBrick->Release();
 
 	if (g_pd3dDevice != NULL)				g_pd3dDevice->Release();
 	if (g_pD3D != NULL)						g_pD3D->Release();
@@ -137,6 +139,8 @@ void SetupLegos()
 	D3DXCreateTextureFromFile(g_pd3dDevice, "greyBrick.png", &g_pGreyBrick);
 	D3DXCreateTextureFromFile(g_pd3dDevice, "blueBrick.png", &g_pBlueBrick);
 	D3DXCreateTextureFromFile(g_pd3dDevice, "houseRedBrick.png", &g_pHouseRedBrick);
+	D3DXCreateTextureFromFile(g_pd3dDevice, "grassBrick.png", &g_pGrassBrick);
+	D3DXCreateTextureFromFile(g_pd3dDevice, "boatBrick.png", &g_pBoatBrick);
 
 	////////////////////////
 	//NEW WORLD
@@ -185,6 +189,12 @@ void SetupLegos()
 	PatternCreator::AddBridge(g_Blocks, 4, 5, 27);
 	PatternCreator::AddBridge(g_Blocks, 43, 5, 27);
 
+	//add bushes
+	PatternCreator::AddWall(g_Blocks, 3, 3, 4, 9, 6, 21, g_pGrassBrick);
+	PatternCreator::AddWall(g_Blocks, 5, 2, 5, 16, 6, 19, g_pGrassBrick);
+	PatternCreator::AddWall(g_Blocks, 5, 2, 4, 28, 6, 21, g_pGrassBrick);
+	PatternCreator::AddWall(g_Blocks, 2, 1, 3, 38, 6, 19, g_pGrassBrick);
+
 	//optimise the blocks
 	g_Blocks.shrink_to_fit();
 	for(int i = 0; i < g_Blocks.size(); ++i)
@@ -200,11 +210,12 @@ void SetupLegos()
 	}
 	g_Blocks.shrink_to_fit();
 
-	//add test moving block after al lother stuff
-	std::shared_ptr<LegoBlock> b(new LegoBlock(2, 2, 6, 6, 14, g_pRedBrick));
-	b->moveable = true;
-	b->SetCovereds(g_Blocks);
-	g_Blocks.push_back(b);
+	//add moving blocks after all other stuff
+	PatternCreator::AddBoat(g_Blocks, 8, 6, 13);
+
+	PatternCreator::AddBoat(g_Blocks, 8, 4, 29);
+
+
 }
 
 //-----------------------------------------------------------------------------
@@ -863,8 +874,8 @@ void Render()
 			g_Blocks[i]->render();
 		}
 		//update moving blocks
-		MoveAmount += 0.2f;
-		if (MoveAmount > 20.0f)
+		MoveAmount += 0.05f;
+		if (MoveAmount > 31.0f)
 		{
 			MoveAmount = 0;
 		}

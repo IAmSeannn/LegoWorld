@@ -160,3 +160,24 @@ PatternCreator::~PatternCreator()
 	 AddWall(blocks, 4, 1, 1, posX, posY + 3, posZ+4, g_pGreyBrick);
 	 AddWall(blocks, 4, 1, 1, posX, posY + 3, posZ+6, g_pGreyBrick);
  }
+
+ void PatternCreator::AddBoat(std::vector<std::shared_ptr<LegoBlock>>&blocks, float posX, float posY, float posZ)
+ {
+	 //block 1
+	 std::shared_ptr<LegoBlock> b1(new LegoBlock(2, 2, posX, posY, posZ, g_pBoatBrick));
+	 b1->moveable = true;
+	 b1->SetCovereds(g_Blocks);
+	 g_Blocks.push_back(b1);
+
+	 //block 2
+	 std::shared_ptr<LegoBlock> b2(new LegoBlock(2, 2, posX+2, posY, posZ, g_pBoatBrick));
+	 b2->moveable = true;
+	 b2->SetCovereds(g_Blocks);
+	 g_Blocks.push_back(b2);
+
+	 //block 3
+	 std::shared_ptr<LegoBlock> b3(new LegoBlock(2, 2, posX+1, posY+1, posZ, g_pBoatBrick));
+	 b3->moveable = true;
+	 b3->SetCovereds(g_Blocks);
+	 g_Blocks.push_back(b3);
+ }
