@@ -6,7 +6,7 @@ LegoBlock::~LegoBlock()
 
 //stud quality
 float Height = 0.2; //height of cylindar
-const int Sides = 10;
+extern const int Sides = 10; // The number of sides used to contruct the circle. More sides = smoother circle.
 bool BlockLocations[1000][200][1000] = {{{false}}};
 
 					//basic buffers
@@ -17,8 +17,13 @@ LPDIRECT3DVERTEXBUFFER9 pLeftBuffer = NULL; // Buffer to hold vertices of basic 
 LPDIRECT3DVERTEXBUFFER9 pRightBuffer = NULL; // Buffer to hold vertices of basic block
 LPDIRECT3DVERTEXBUFFER9 pBackBuffer = NULL; // Buffer to hold vertices of basic block
 LPDIRECT3DVERTEXBUFFER9 pStudBuffer = NULL; // Buffer to hold vertices of basic block
+
 LPDIRECT3DVERTEXBUFFER9 pStudBufferHQTop = NULL; // Buffer to hold vertices of basic block
 LPDIRECT3DVERTEXBUFFER9 pStudBufferHQSides = NULL; // Buffer to hold vertices of basic block
+LPDIRECT3DVERTEXBUFFER9 pStudBufferMQTop = NULL; // Buffer to hold vertices of basic block
+LPDIRECT3DVERTEXBUFFER9 pStudBufferMQSides = NULL; // Buffer to hold vertices of basic block
+LPDIRECT3DVERTEXBUFFER9 pStudBufferLQTop = NULL; // Buffer to hold vertices of basic block
+LPDIRECT3DVERTEXBUFFER9 pStudBufferLQSides = NULL; // Buffer to hold vertices of basic block
 
 LPDIRECT3DTEXTURE9		g_pGreenBrick = NULL; // The texture.
 LPDIRECT3DTEXTURE9		g_pRedBrick = NULL; // The texture.
@@ -27,10 +32,12 @@ LPDIRECT3DTEXTURE9		g_pBlueBrick = NULL; // The texture.
 LPDIRECT3DTEXTURE9		g_pHouseRedBrick = NULL; // The texture.
 
 std::vector<std::shared_ptr<LegoBlock>> g_Blocks;
-D3DXVECTOR3 g_vCamera(25.0f, 80.0f, 25.0f);
+D3DXVECTOR3 g_vCamera(25.0f, 40.0f, -20.0f);
 
 LPDIRECT3DDEVICE9       g_pd3dDevice = NULL; // The rendering device
 FrustumClass* g_Frustum = new FrustumClass;
+
+float MoveAmount = 0.0f;
 
 void LegoBlock::SetCovereds(std::vector<std::shared_ptr<LegoBlock>>&v)
 {
@@ -86,6 +93,34 @@ void LegoBlock::render()
 	g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 
 
+	//if moving do translate
+	if (moveable)
+	{
+		studLocations.clear();
+		for (int i = 0; i < xNum; ++i)
+		{
+			for (int j = 0; j < zNum; ++j)
+			{
+
+				D3DXMATRIX temp;
+				D3DXMatrixIdentity(&temp);
+				D3DXMatrixTranslation(&TranslateMat, x + i+MoveAmount, y*1.2f, z + j);
+				D3DXMatrixScaling(&ScaleMat, 1.0f, 1.2f, 1.0f);
+				D3DXMatrixMultiply(&temp, &temp, &ScaleMat);		// First Scale
+				D3DXMatrixMultiply(&temp, &temp, &TranslateMat);	// And finally Translate
+
+				studLocations.push_back(temp);
+			}
+		}
+
+		D3DXMatrixIdentity(&PostWorldMat);
+		D3DXMatrixTranslation(&TranslateMat, x + MoveAmount, y*1.2f, z);
+		D3DXMatrixScaling(&PostScaleMat, xNum, 1.2f, zNum);
+		D3DXMatrixMultiply(&PostWorldMat, &PostWorldMat, &PostScaleMat);		// First Scale
+		D3DXMatrixMultiply(&PostWorldMat, &PostWorldMat, &TranslateMat);	// And finally Translate
+
+	}
+
 	//check if on screen
 
 	if (g_Frustum->CheckSphere(x, y, z, 4.0f))
@@ -102,13 +137,27 @@ void LegoBlock::render()
 			//DRAW STUDS
 			if (D3DXVec3Length(length) >= 40)
 			{
-				//for (auto studMat : studLocations)
-				//{
-				//	g_pd3dDevice->SetTransform(D3DTS_WORLD, &studMat);
-				//	//draw lq version
-				//	g_pd3dDevice->SetStreamSource(0, pStudBuffer, 0, sizeof(CUSTOMVERTEX));
-				//	g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 6 * 2);
-				//}
+				for (auto studMat : studLocations)
+				{
+					g_pd3dDevice->SetTransform(D3DTS_WORLD, &studMat);
+					//draw lq version
+					g_pd3dDevice->SetStreamSource(0, pStudBufferLQSides, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 3 * 2);
+					g_pd3dDevice->SetStreamSource(0, pStudBufferLQTop, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 3);
+				}
+			}
+			else if (D3DXVec3Length(length) < 40 && D3DXVec3Length(length) >= 20)
+			{
+				for (auto studMat : studLocations)
+				{
+					g_pd3dDevice->SetTransform(D3DTS_WORLD, &studMat);
+					//draw lq version
+					g_pd3dDevice->SetStreamSource(0, pStudBufferMQSides, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 5 * 2);
+					g_pd3dDevice->SetStreamSource(0, pStudBufferMQTop, 0, sizeof(CUSTOMVERTEX));
+					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 5);
+				}
 			}
 			else
 			{

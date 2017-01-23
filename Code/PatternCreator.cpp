@@ -144,8 +144,19 @@ PatternCreator::~PatternCreator()
 	 ////////////////////
 	 //ROOF
 	 ///////////////////
-	 AddFlatPlane(blocks, 13, 1, 8, posX - 1, posY + height, posZ - 1, g_pGreyBrick);
+	 AddFlatPlane(blocks, 13, 1, 10, posX - 1, posY + height, posZ - 1, g_pGreyBrick);
 	 AddFlatPlane(blocks, 9, 1, 6, posX + 1, posY + height + 1, posZ + 1, g_pGreyBrick);
 	 AddFlatPlane(blocks, 5, 1, 2, posX + 3, posY + height +2, posZ + 3, g_pGreyBrick);
 
+ }
+
+ void PatternCreator::AddBridge(std::vector<std::shared_ptr<LegoBlock>>&blocks, float posX, float posY, float posZ)
+ {
+	 AddWall(blocks, 1, 3, 7, posX, posY, posZ, g_pGreyBrick);
+	 AddWall(blocks, 1, 3, 7, posX+3, posY, posZ, g_pGreyBrick);
+
+	 AddWall(blocks, 4, 1, 1, posX, posY + 3, posZ, g_pGreyBrick);
+	 AddWall(blocks, 4, 1, 1, posX, posY + 3, posZ+2, g_pGreyBrick);
+	 AddWall(blocks, 4, 1, 1, posX, posY + 3, posZ+4, g_pGreyBrick);
+	 AddWall(blocks, 4, 1, 1, posX, posY + 3, posZ+6, g_pGreyBrick);
  }

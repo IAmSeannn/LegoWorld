@@ -21,8 +21,13 @@ extern LPDIRECT3DVERTEXBUFFER9 pLeftBuffer; // Buffer to hold vertices of basic 
 extern LPDIRECT3DVERTEXBUFFER9 pRightBuffer; // Buffer to hold vertices of basic block
 extern LPDIRECT3DVERTEXBUFFER9 pBackBuffer; // Buffer to hold vertices of basic block
 extern LPDIRECT3DVERTEXBUFFER9 pStudBuffer; // Buffer to hold vertices of basic block
+
 extern LPDIRECT3DVERTEXBUFFER9 pStudBufferHQTop; // Buffer to hold vertices of basic block
 extern LPDIRECT3DVERTEXBUFFER9 pStudBufferHQSides; // Buffer to hold vertices of basic block
+extern LPDIRECT3DVERTEXBUFFER9 pStudBufferMQTop; // Buffer to hold vertices of basic block
+extern LPDIRECT3DVERTEXBUFFER9 pStudBufferMQSides; // Buffer to hold vertices of basic block
+extern LPDIRECT3DVERTEXBUFFER9 pStudBufferLQTop; // Buffer to hold vertices of basic block
+extern LPDIRECT3DVERTEXBUFFER9 pStudBufferLQSides; // Buffer to hold vertices of basic block
 
 extern LPDIRECT3DTEXTURE9		g_pGreenBrick; // The texture.
 extern LPDIRECT3DTEXTURE9		g_pRedBrick; // The texture.
@@ -36,6 +41,8 @@ extern D3DXVECTOR3 g_vCamera;
 extern LPDIRECT3DDEVICE9       g_pd3dDevice; // The rendering device
 extern FrustumClass* g_Frustum;;
 
+extern float MoveAmount;
+
 struct CUSTOMVERTEX
 {
 	D3DXVECTOR3 position;	// Position
@@ -46,7 +53,7 @@ struct CUSTOMVERTEX
 class LegoBlock
 {
 public:
-	LegoBlock(int sizeX, int sizeZ, float posX, float posY, float posZ, LPDIRECT3DTEXTURE9 tex) : x(posX), y(posY), z(posZ), Texture(tex), xNum(sizeX), zNum(sizeZ)
+	LegoBlock(int sizeX, int sizeZ, float posX, float posY, float posZ, LPDIRECT3DTEXTURE9 tex) : x(posX), y(posY), z(posZ), Texture(tex), xNum(sizeX), zNum(sizeZ), moveable(false)
 	{
 		//set BlockLocations to true in correct location
 		for (int i = 0; i < sizeX; ++i)
@@ -57,10 +64,12 @@ public:
 			}
 		}
 
+		studLocations.clear();
 		for (int i = 0; i < sizeX; ++i)
 		{
 			for (int j = 0; j < sizeZ; ++j)
 			{
+
 				D3DXMATRIX temp;
 				D3DXMatrixIdentity(&temp);
 				D3DXMatrixTranslation(&TranslateMat, x+i, y*1.2f, z+j);
@@ -97,6 +106,7 @@ public:
 	void render();
 	int xNum, zNum;
 	float x, y, z;
+	bool moveable;
 protected:
 	
 };
