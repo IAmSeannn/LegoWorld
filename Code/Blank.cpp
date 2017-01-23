@@ -32,7 +32,7 @@ ID3DXFont *pFont;
 RECT fRectangle;
 std::string textMessage;
 
-D3DXVECTOR3 g_vLookat(10.0f, 5.0f, 10.0f);
+D3DXVECTOR3 g_vLookat(25.0f, 10.0f, 25.0f);
 
 // The structure of a vertex in our vertex buffer...
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
@@ -127,22 +127,39 @@ void SetupLegos()
 	D3DXCreateTextureFromFile(g_pd3dDevice, "redBrick.png", &g_pRedBrick);
 	D3DXCreateTextureFromFile(g_pd3dDevice, "greyBrick.png", &g_pGreyBrick);
 
+	////////////////////////
+	//NEW WORLD
+	///////////////////////
+
+	PatternCreator::AddFlatPlane(g_Blocks, 50, 1, 17, 0, 5, 33, g_pGreenBrick);
+	PatternCreator::AddFlatPlane(g_Blocks, 50, 1, 6, 0, 1, 27, g_pGreyBrick);
+	PatternCreator::AddFlatPlane(g_Blocks, 50, 1, 26, 0, 5, 0, g_pGreenBrick);
+
+	PatternCreator::AddWall(g_Blocks, 50, 5, 1, 0, 5, 50, g_pGreyBrick);
+	PatternCreator::AddWall(g_Blocks, 50, 5, 1, 0, 5, 0, g_pGreyBrick);
+
+	//PatternCreator::AddHouse(g_Blocks, 2, 6, 41);
+
+
+
+
+
 	//create the world
 	////outer grass
-	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, g_pGreenBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, g_pGreenBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, g_pGreenBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 0, 0, 0, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 5, 1, 30, 25, 0, 0, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 0, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 20, 1, 5, 5, 0, 25, g_pGreenBrick);
 
-	//road
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, g_pGreyBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, g_pGreyBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, g_pGreyBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, g_pGreyBrick);
+	////road
+	//PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 5, 0, 5, g_pGreyBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 3, 1, 20, 22, 0, 5, g_pGreyBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 5, g_pGreyBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 3, 8, 0, 22, g_pGreyBrick);
 
-	//center grass and house
-	PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
-	PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
+	////center grass and house
+	//PatternCreator::AddUniformAmount(g_Blocks, 14, 1, 14, 8, 0, 8, g_pGreenBrick);
+	//PatternCreator::AddUniformAmount(g_Blocks, 3, 2, 4, 10, 1, 10, g_pRedBrick);
 
 	/*std::shared_ptr<LegoBlock> a(new LegoBlock(1, 4, 0, 0, 0, g_pGreenBrick));
 	g_Blocks.push_back(a);
@@ -530,7 +547,7 @@ void SetupDirectionalLight()
 	SampleLight.Diffuse.g = 1.2f;
 	SampleLight.Diffuse.b = 1.2f;
 
-	SampleLight.Position = D3DXVECTOR3(50.0f, 50.0f, 50.0f);
+	SampleLight.Position = D3DXVECTOR3(50.0f, 50.0f, -50.0f);
 	SampleLight.Attenuation0 = 1.0f;
 	SampleLight.Attenuation1 = 0.0f;
 	SampleLight.Attenuation2 = 0.0f;

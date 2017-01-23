@@ -7,7 +7,7 @@ LegoBlock::~LegoBlock()
 //stud quality
 float Height = 0.2; //height of cylindar
 const int Sides = 10;
-bool BlockLocations[50][10][50] = {{{false}}};
+bool BlockLocations[1000][200][1000] = {{{false}}};
 
 					//basic buffers
 LPDIRECT3DVERTEXBUFFER9 pTopBuffer = NULL; // Buffer to hold vertices of basic block
@@ -25,7 +25,7 @@ LPDIRECT3DTEXTURE9		g_pRedBrick = NULL; // The texture.
 LPDIRECT3DTEXTURE9		g_pGreyBrick = NULL; // The texture.
 
 std::vector<std::shared_ptr<LegoBlock>> g_Blocks;
-D3DXVECTOR3 g_vCamera(25.0f, 25.0f, -20.0f);
+D3DXVECTOR3 g_vCamera(0.0f, 20.0f, -30.0f);
 
 LPDIRECT3DDEVICE9       g_pd3dDevice = NULL; // The rendering device
 FrustumClass* g_Frustum = new FrustumClass;
@@ -86,7 +86,7 @@ void LegoBlock::render()
 
 	//check if on screen
 
-	if (g_Frustum->CheckSphere(x, y, z, 0.8f))
+	if (g_Frustum->CheckSphere(x, y, z, 4.0f))
 	{
 		g_pd3dDevice->SetTransform(D3DTS_WORLD, &WorldMat);
 
@@ -96,15 +96,17 @@ void LegoBlock::render()
 			//check how close brick is
 			D3DXVECTOR3 brickPos(x, y, z);
 			D3DXVECTOR3 * length(new D3DXVECTOR3(g_vCamera - brickPos));
+
+			//DRAW STUDS
 			if (D3DXVec3Length(length) >= 40)
 			{
-				for (auto studMat : studLocations)
-				{
-					g_pd3dDevice->SetTransform(D3DTS_WORLD, &studMat);
-					//draw lq version
-					g_pd3dDevice->SetStreamSource(0, pStudBuffer, 0, sizeof(CUSTOMVERTEX));
-					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 6 * 2);
-				}
+				//for (auto studMat : studLocations)
+				//{
+				//	g_pd3dDevice->SetTransform(D3DTS_WORLD, &studMat);
+				//	//draw lq version
+				//	g_pd3dDevice->SetStreamSource(0, pStudBuffer, 0, sizeof(CUSTOMVERTEX));
+				//	g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 6 * 2);
+				//}
 			}
 			else
 			{
@@ -119,6 +121,9 @@ void LegoBlock::render()
 					g_pd3dDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, Sides);
 				}
 			}
+			//END OF DRAW STUDS
+
+
 			delete length;
 		}	
 	}
