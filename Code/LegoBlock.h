@@ -27,6 +27,8 @@ extern LPDIRECT3DVERTEXBUFFER9 pStudBufferHQSides; // Buffer to hold vertices of
 extern LPDIRECT3DTEXTURE9		g_pGreenBrick; // The texture.
 extern LPDIRECT3DTEXTURE9		g_pRedBrick; // The texture.
 extern LPDIRECT3DTEXTURE9		g_pGreyBrick; // The texture.
+extern LPDIRECT3DTEXTURE9		g_pBlueBrick ; // The texture.
+extern LPDIRECT3DTEXTURE9		g_pHouseRedBrick; // The texture.
 
 extern std::vector<std::shared_ptr<LegoBlock>> g_Blocks;
 extern D3DXVECTOR3 g_vCamera;

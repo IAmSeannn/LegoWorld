@@ -23,9 +23,11 @@ LPDIRECT3DVERTEXBUFFER9 pStudBufferHQSides = NULL; // Buffer to hold vertices of
 LPDIRECT3DTEXTURE9		g_pGreenBrick = NULL; // The texture.
 LPDIRECT3DTEXTURE9		g_pRedBrick = NULL; // The texture.
 LPDIRECT3DTEXTURE9		g_pGreyBrick = NULL; // The texture.
+LPDIRECT3DTEXTURE9		g_pBlueBrick = NULL; // The texture.
+LPDIRECT3DTEXTURE9		g_pHouseRedBrick = NULL; // The texture.
 
 std::vector<std::shared_ptr<LegoBlock>> g_Blocks;
-D3DXVECTOR3 g_vCamera(0.0f, 20.0f, -30.0f);
+D3DXVECTOR3 g_vCamera(25.0f, 80.0f, 25.0f);
 
 LPDIRECT3DDEVICE9       g_pd3dDevice = NULL; // The rendering device
 FrustumClass* g_Frustum = new FrustumClass;

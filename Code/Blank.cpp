@@ -32,7 +32,7 @@ ID3DXFont *pFont;
 RECT fRectangle;
 std::string textMessage;
 
-D3DXVECTOR3 g_vLookat(25.0f, 10.0f, 25.0f);
+D3DXVECTOR3 g_vLookat(25.0f, 0.0f, 25.0f);
 
 // The structure of a vertex in our vertex buffer...
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
@@ -101,6 +101,8 @@ void CleanUp()
 	if (g_pGreenBrick != NULL)				g_pGreenBrick->Release();
 	if (g_pRedBrick != NULL)				g_pRedBrick->Release();
 	if (g_pGreyBrick != NULL)				g_pGreyBrick->Release();
+	if (g_pBlueBrick != NULL)				g_pBlueBrick->Release();
+	if (g_pHouseRedBrick != NULL)			g_pHouseRedBrick->Release();
 
 	if (g_pd3dDevice != NULL)				g_pd3dDevice->Release();
 	if (g_pD3D != NULL)						g_pD3D->Release();
@@ -126,19 +128,45 @@ void SetupLegos()
 	D3DXCreateTextureFromFile(g_pd3dDevice, "greenBrick.png", &g_pGreenBrick);
 	D3DXCreateTextureFromFile(g_pd3dDevice, "redBrick.png", &g_pRedBrick);
 	D3DXCreateTextureFromFile(g_pd3dDevice, "greyBrick.png", &g_pGreyBrick);
+	D3DXCreateTextureFromFile(g_pd3dDevice, "blueBrick.png", &g_pBlueBrick);
+	D3DXCreateTextureFromFile(g_pd3dDevice, "houseRedBrick.png", &g_pHouseRedBrick);
 
 	////////////////////////
 	//NEW WORLD
 	///////////////////////
 
-	PatternCreator::AddFlatPlane(g_Blocks, 50, 1, 17, 0, 5, 33, g_pGreenBrick);
-	PatternCreator::AddFlatPlane(g_Blocks, 50, 1, 6, 0, 1, 27, g_pGreyBrick);
-	PatternCreator::AddFlatPlane(g_Blocks, 50, 1, 26, 0, 5, 0, g_pGreenBrick);
+	PatternCreator::AddWall(g_Blocks, 50, 4, 1, 0, 6, 50, g_pGreyBrick);
+	PatternCreator::AddWall(g_Blocks, 50, 4, 1, 0, 6, 0, g_pGreyBrick);
+	PatternCreator::AddWall(g_Blocks, 1, 4, 50, 0, 6, 0, g_pGreyBrick);
+	PatternCreator::AddWall(g_Blocks, 1, 4, 50, 50, 6, 0, g_pGreyBrick);
+	
+	//front section
+	//grass
+	PatternCreator::AddFlatPlane(g_Blocks, 50, 1, 11, 0, 5, 0, g_pGreenBrick);
+	PatternCreator::AddFlatPlane(g_Blocks, 3, 1, 15, 1, 5, 12, g_pGreenBrick);
+	PatternCreator::AddFlatPlane(g_Blocks, 3, 1, 15, 47, 5, 12, g_pGreenBrick);
+	PatternCreator::AddFlatPlane(g_Blocks, 35, 1, 11, 8, 5, 16, g_pGreenBrick);
+	
 
-	PatternCreator::AddWall(g_Blocks, 50, 5, 1, 0, 5, 50, g_pGreyBrick);
-	PatternCreator::AddWall(g_Blocks, 50, 5, 1, 0, 5, 0, g_pGreyBrick);
+	//back section
+	//grass
+	PatternCreator::AddFlatPlane(g_Blocks, 50, 1, 11, 0, 5, 39, g_pGreenBrick);
+	PatternCreator::AddFlatPlane(g_Blocks, 4, 1, 6, 0, 5, 33, g_pGreenBrick);
+	PatternCreator::AddFlatPlane(g_Blocks, 4, 1, 6, 47, 5, 33, g_pGreenBrick);
+	PatternCreator::AddFlatPlane(g_Blocks, 35, 1, 2, 8, 5, 33, g_pGreenBrick);
 
-	//PatternCreator::AddHouse(g_Blocks, 2, 6, 41);
+	//road
+	PatternCreator::AddFlatPlane(g_Blocks, 43, 1, 4, 4, 5, 35, g_pGreyBrick);
+	PatternCreator::AddFlatPlane(g_Blocks, 43, 1, 4, 4, 5, 12, g_pGreyBrick);
+	PatternCreator::AddFlatPlane(g_Blocks, 4, 1, 19, 4, 5, 16, g_pGreyBrick);
+	PatternCreator::AddFlatPlane(g_Blocks, 4, 1, 19, 43, 5, 16, g_pGreyBrick);
+
+	//lowqer section
+	PatternCreator::AddFlatPlane(g_Blocks, 50, 1, 6, 0, 1, 27, g_pBlueBrick);
+	PatternCreator::AddWall(g_Blocks, 50, 5, 1, 0, 0, 26, g_pHouseRedBrick);
+	PatternCreator::AddWall(g_Blocks, 50, 5, 1, 0, 0, 33, g_pHouseRedBrick);
+
+	PatternCreator::AddHouse(g_Blocks, 2, 6, 41);
 
 
 
